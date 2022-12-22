@@ -1,19 +1,19 @@
 <template>
-  <router-view></router-view>
+  index
+  <button @click="login">登录</button>
 </template>
 
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 export default {
-  name: "App",
+  name: "index",
   setup() {
-    let hello = ref("hello world");
     const router = useRouter();
-    const test = () => {
-      router.push("test");
+    let login = () => {
+      router.push("login");
     };
-    return { hello, test };
+    return { login };
   },
 };
 </script>
