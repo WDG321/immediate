@@ -8,12 +8,8 @@ import { useRouter } from "vue-router";
 export default {
   name: "App",
   setup() {
-    let hello = ref("hello world");
-    const router = useRouter();
-    const test = () => {
-      router.push("test");
-    };
-    return { hello, test };
+
+    return {  };
   },
 };
 </script>

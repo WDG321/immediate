@@ -1,6 +1,8 @@
 <template>
   index
   <button @click="login">登录</button>
+  <button @click="test">子路由测试</button>
+  <router-view></router-view>
 </template>
 
 <script>
@@ -13,7 +15,10 @@ export default {
     let login = () => {
       router.push("login");
     };
-    return { login };
+    let test = () => {
+      router.push("/index/test");
+    };
+    return { login,test };
   },
 };
 </script>
