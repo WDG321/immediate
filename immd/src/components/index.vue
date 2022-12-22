@@ -13,7 +13,7 @@ export default {
   setup() {
     const router = useRouter();
     let login = () => {
-      router.push("login");
+      router.push("/login");
     };
     let test = () => {
       router.push("/index/test");
