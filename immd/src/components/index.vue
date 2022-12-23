@@ -1,5 +1,6 @@
 <template>
   index
+  <el-button type="primary">Primary</el-button>
   <button @click="login">登录</button>
   <button @click="test">子路由测试</button>
   <router-view></router-view>
