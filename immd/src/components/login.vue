@@ -109,7 +109,7 @@ export default {
 .img {
   width: 5rem;
   height: 5rem;
-  background-image: url(2233.png);
+  background-image: url(/2233.png);
   background-size: 100%, 100%;
 }
 .text {
