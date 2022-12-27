@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box" ref="box">
     <div class="text">{{ title }}</div>
     <div class="search"></div>
     <div class="addTo"></div>
@@ -7,13 +7,14 @@
 </template>
 
 <script>
-import { inject } from "vue";
+import { ref, inject } from "vue";
 export default {
   name: "TopBar",
   setup() {
     //后代组件有一个 `inject` 选项来开始使用这些数据
     let title = inject("title"); //使用inject函数接收祖先组件使用provide函数传递的数据
-    return { title };
+    const box = ref(null);
+    return { title, box };
   },
 };
 </script>

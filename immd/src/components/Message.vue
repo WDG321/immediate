@@ -1,10 +1,15 @@
 <template>
   <el-scrollbar class="elScrollbar" ref="elScrollbar" @scroll="scroll">
-    <div v-for="item in 50" :key="item" class="messageList">
+    <div v-for="item in 20" :key="item" class="messageList">
       <div class="headshot"></div>
-      <div>
-        <div class="username">我是昵称</div>
-        <div class="messagePreview">我是最新消息的预览</div>
+      <div class="box">
+        <div>
+          <div class="username">我是昵称</div>
+          <div class="messagePreview">
+            我是最新消息的预览,我是最新消息的预览,我是最新消息的预览
+          </div>
+        </div>
+        <div class="date">12月32日</div>
       </div>
     </div>
   </el-scrollbar>
@@ -27,6 +32,12 @@ export default {
       //更改滚动条位置
       elScrollbar.value.setScrollTop(scrollDistance.value);
     });
+    onMounted(() => {
+      //document.documentElement.clientHeight为网页可见区域高
+      //92.8的来源是顶部导航与底部导航的高度加起来任何乘以16，16为html的字体大小(px),因为使用了rem来设置高度
+      elScrollbar.value.wrapRef.style.height =
+        document.documentElement.clientHeight - 92.8 + "px";
+    });
     return { elScrollbar, scroll };
   },
 };
@@ -34,9 +45,9 @@ export default {
 
 <style scoped>
 .elScrollbar {
-  height: calc(100vh - 5.8rem);
 }
 .messageList {
+  width: 100%;
   display: flex;
   align-items: center;
 }
@@ -49,9 +60,30 @@ export default {
 }
 .username {
   font-size: 1.1rem;
+  margin-top: 0.5rem;
 }
 .messagePreview {
   font-size: 0.8rem;
   color: rgb(183, 183, 183);
+  width: 12rem;
+  /* 超出部分切除 */
+  overflow: hidden;
+  /* 强制文本不换行 */
+  white-space: nowrap;
+  /* 文本超出部分用省略号替代 */
+  text-overflow: ellipsis;
+}
+.date {
+  font-size: 0.8rem;
+  color: rgb(183, 183, 183);
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+}
+.box {
+  display: flex;
+  justify-content: space-between;
+  width: calc(100vw - 3.5rem);
+  border-bottom: 0.4px solid rgba(205, 204, 204, 0.5);
+  height: 4rem;
 }
 </style>
