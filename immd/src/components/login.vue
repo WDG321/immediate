@@ -134,6 +134,7 @@ export default {
   height: 3.5rem;
 }
 :deep(.el-input__wrapper) {
+  /* 设置圆角 */
   border-radius: 1.5rem;
   font-size: 1.5rem;
 }

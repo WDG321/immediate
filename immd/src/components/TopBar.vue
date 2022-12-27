@@ -12,7 +12,7 @@ export default {
   name: "TopBar",
   setup() {
     //后代组件有一个 `inject` 选项来开始使用这些数据
-    const title = inject("title"); //使用inject函数接收祖先组件使用provide函数传递的数据
+    let title = inject("title"); //使用inject函数接收祖先组件使用provide函数传递的数据
     return { title };
   },
 };

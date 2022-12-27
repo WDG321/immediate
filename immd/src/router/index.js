@@ -11,21 +11,30 @@ const routes = [
     component: index,
   },
   {
+    name: "index",
     path: "/index",
     component: index,
     //配置子路由
     children: [{
+      name: "test",
       path: "test",
       component: test
     }, {
+      name: "Message",
       path: "Message",
-      component: Message
+      component: Message,
+      //配置是否缓存
+      meta: { keepAlive: true }
     }, {
+      name: "Contact",
       path: "Contact",
-      component: Contact
+      component: Contact,
+      meta: { keepAlive: true }
     }, {
+      name: "Me",
       path: "Me",
-      component: Me
+      component: Me,
+      meta: { keepAlive: true }
     }]
   },
   {
