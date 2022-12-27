@@ -52,6 +52,7 @@ export default {
       buttonText.value = "";
       //模拟登录
       setTimeout(() => {
+        //判断是否登录成功
         if (username.value != "" && passworld.value != "") {
           ElMessage({ message: "登录成功", type: "success" });
           //登录成功跳到主页
@@ -91,7 +92,7 @@ export default {
       login,
       buttonText,
       usernameInput,
-      passworldInput
+      passworldInput,
     };
   },
 };

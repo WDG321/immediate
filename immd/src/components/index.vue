@@ -1,13 +1,11 @@
 <template>
   <TopBar></TopBar>
-  <button @click="login">登录</button>
-  <button @click="test">子路由测试</button>
   <router-view></router-view>
   <BottomBar class="BottomBar"></BottomBar>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, provide } from "vue";
 import { useRouter } from "vue-router";
 import TopBar from "./TopBar.vue";
 import BottomBar from "./BottomBar.vue";
@@ -16,13 +14,10 @@ export default {
   name: "index",
   setup() {
     const router = useRouter();
-    let login = () => {
-      router.push("/login");
-    };
-    let test = () => {
-      router.push("/index/test");
-    };
-    return { login, test };
+    let title = ref(null);
+    //父组件有一个 `provide` 选项来提供数据
+    provide("title", title); //provide接收两个参数，参数1为数据起名，参数二为需要传入的数据
+    return { };
   },
   //注册组件
   components: {

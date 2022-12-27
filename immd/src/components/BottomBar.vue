@@ -16,10 +16,13 @@
 </template>
 
 <script>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, inject } from "vue";
+import { useRouter } from "vue-router";
 export default {
   name: "BottomBar",
   setup() {
+    const router = useRouter();
+    const title = inject("title");
     const messageText = ref(null);
     const messageImg = ref(null);
     let messageMark = ref(null);
@@ -53,6 +56,8 @@ export default {
       if (messageMark.value == true) {
         messageText.value.style.color = "#409eff";
         messageImg.value.style.backgroundImage = "url(/interactive_fill.png)";
+        title.value = "消息";
+        router.push("/index/Message");
       } else {
         messageText.value.style.color = "rgb(0,0,0)";
         messageImg.value.style.backgroundImage = "url(/interactive.png)";
@@ -62,6 +67,8 @@ export default {
       if (contactMark.value == true) {
         contactText.value.style.color = "#409eff";
         contactImg.value.style.backgroundImage = "url(/group_fill.png)";
+        title.value = "联系人";
+        router.push("/index/Contact");
       } else {
         contactText.value.style.color = "rgb(0,0,0)";
         contactImg.value.style.backgroundImage = "url(/group.png)";
@@ -71,6 +78,8 @@ export default {
       if (meMark.value == true) {
         meText.value.style.color = "#409eff";
         meImg.value.style.backgroundImage = "url(/people_fill.png)";
+        title.value = "我";
+        router.push("/index/Me");
       } else {
         meText.value.style.color = "rgb(0,0,0)";
         meImg.value.style.backgroundImage = "url(/people.png)";
