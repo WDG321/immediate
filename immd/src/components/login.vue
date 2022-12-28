@@ -14,14 +14,14 @@
       @input="usernameInput"
     />
     <el-input
-      v-model="passworld"
+      v-model="password"
       placeholder="密码"
       class="passworld"
       size="large"
       show-password
       :disabled="loading"
       maxlength="12"
-      @input="passworldInput"
+      @input="passwordInput"
     />
   </div>
   <el-button
@@ -37,33 +37,49 @@
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 export default {
   name: "login",
   setup() {
     let username = ref("");
-    let passworld = ref("");
+    let password = ref("");
     let loading = ref(false);
     let buttonText = ref("登录");
     const router = useRouter();
-    const login = () => {
+    const login = async () => {
+      //判断账户密码是否为空，为空就退出登录函数
+      if (username.value == "" || password.value == "") {
+        return ElMessage.error("账号名或密码不能为空");
+      }
       //转为加载中状态
       loading.value = true;
       //清空按钮文本
       buttonText.value = "";
-      //模拟登录
-      setTimeout(() => {
-        //判断是否登录成功
-        if (username.value != "" && passworld.value != "") {
-          ElMessage({ message: "登录成功", type: "success" });
-          //登录成功跳到主页
-          router.push("/");
-        } else {
-          //登录失败恢复原状态
-          loading.value = false;
-          buttonText.value = "登录";
-          ElMessage.error("账号名或密码错误");
-        }
-      }, 1000);
+      //配置请求信息
+      let config = {
+        method: "post",
+        url: "http://localhost/loginApi",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        data: {
+          username: username.value,
+          password: password.value,
+        },
+      };
+      //发起请求
+      let response = await axios(config);
+      //判断是否登录成功
+      if (response.data == true) {
+        ElMessage({ message: "登录成功", type: "success" });
+        //登录成功跳到主页
+        router.push("/");
+      } else {
+        //登录失败恢复原状态
+        loading.value = false;
+        buttonText.value = "登录";
+        ElMessage.error("账号名或密码错误");
+      }
     };
     //处理账号Input内容更改事件
     const usernameInput = () => {
@@ -74,21 +90,21 @@ export default {
       }
     };
     //处理密码Input内容更改事件
-    const passworldInput = () => {
+    const passwordInput = () => {
       //有空格就删除掉空格
-      if (passworld.value.indexOf(" ") != -1) {
-        let str = passworld.value.replace(/\s*/g, "");
-        passworld.value = str;
+      if (password.value.indexOf(" ") != -1) {
+        let str = password.value.replace(/\s*/g, "");
+        password.value = str;
       }
     };
     return {
       username,
-      passworld,
+      password,
       loading,
       login,
       buttonText,
       usernameInput,
-      passworldInput,
+      passwordInput,
     };
   },
 };

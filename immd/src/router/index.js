@@ -45,9 +45,9 @@ const routes = [
 ];
 
 const router = createRouter({
-  /* history: createWebHistory(), */
+  history: createWebHistory(),
   //哈希模式
-  history: createWebHashHistory(),
+  /* history: createWebHashHistory(), */
   routes,
 });
 //全局路由守卫

@@ -22,15 +22,15 @@ export default {
   setup() {
     const elScrollbar = ref(null);
     //后代组件有一个 `inject` 选项来开始使用这些数据
-    let scrollDistance = inject("scrollDistance"); //使用inject函数接收祖先组件使用provide函数传递的数据
+    let messageScrollDistance = inject("messageScrollDistance"); //使用inject函数接收祖先组件使用provide函数传递的数据
     const scroll = ({ scrollTop }) => {
       //记录滚动的距离
-      scrollDistance.value = scrollTop;
+      messageScrollDistance.value = scrollTop;
     };
     //路由激活组件时调用
     onActivated(() => {
       //更改滚动条位置
-      elScrollbar.value.setScrollTop(scrollDistance.value);
+      elScrollbar.value.setScrollTop(messageScrollDistance.value);
     });
     onMounted(() => {
       //document.documentElement.clientHeight为网页可见区域高

@@ -33,10 +33,13 @@ export default {
     //设置顶部导航栏的标题名
     let title = ref(null);
     //设置message页面的滚动距离
-    let scrollDistance = ref(0);
+    let messageScrollDistance = ref(0);
+    //设置Contact页面的滚动距离
+    let contactScrollDistance = ref(0);
     //父组件有一个 `provide` 选项来提供数据给后代组件
     provide("title", title); //provide接收两个参数，参数1为数据起名，参数二为需要传入的数据
-    provide("scrollDistance", scrollDistance); 
+    provide("messageScrollDistance", messageScrollDistance);
+    provide("contactScrollDistance", contactScrollDistance);
     return {};
   },
   //注册组件

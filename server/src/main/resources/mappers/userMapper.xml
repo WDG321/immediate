@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.server.mappers.userMapper"><!--这里填写mapper接口的全类名-->
+    <!--
+            sql语句的查询标签必须设置resultType或者resultMap属性
+            resultType：设置默认的映射关系，设置把查询结果转换成哪个类的对象,但类的属性名必须与表中的字段名保持一致
+            resultMap：设置自定义的映射关系(用于表中的字段名与类的属性名不一致的时候使用)
+        -->
+    <select id="login" resultType="com.example.server.mappers.user">/*不使用类型别名*/
+    select *
+    from user
+    where username = #{username}
+      and password = #{password}
+    </select>
+</mapper>
