@@ -72,10 +72,6 @@ export default {
         let str = username.value.replace(/\s*/g, "");
         username.value = str;
       }
-      if (passworld.value.indexOf(" ") != -1) {
-        let str = passworld.value.replace(/\s*/g, "");
-        passworld.value = str;
-      }
     };
     //处理密码Input内容更改事件
     const passworldInput = () => {

@@ -1,4 +1,4 @@
-import { createWebHistory, createRouter } from "vue-router";
+import { createWebHistory, createWebHashHistory, createRouter } from "vue-router";
 import login from "../components/login.vue";
 import index from "../components/index.vue";
 import test from "../components/test.vue";
@@ -45,7 +45,9 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  /* history: createWebHistory(), */
+  //哈希模式
+  history: createWebHashHistory(),
   routes,
 });
 //全局路由守卫
