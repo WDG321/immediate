@@ -57,7 +57,8 @@ export default {
         messageText.value.style.color = "#409eff";
         messageImg.value.style.backgroundImage = "url(/interactive_fill.png)";
         title.value = "消息";
-        router.push("/index/Message");
+        //使用replace将不会留下历史记录
+        router.replace("/index/Message");
       } else {
         messageText.value.style.color = "rgb(0,0,0)";
         messageImg.value.style.backgroundImage = "url(/interactive.png)";
@@ -68,7 +69,8 @@ export default {
         contactText.value.style.color = "#409eff";
         contactImg.value.style.backgroundImage = "url(/group_fill.png)";
         title.value = "联系人";
-        router.push("/index/Contact");
+        //使用replace将不会留下历史记录
+        router.replace("/index/Contact");
       } else {
         contactText.value.style.color = "rgb(0,0,0)";
         contactImg.value.style.backgroundImage = "url(/group.png)";
@@ -79,7 +81,8 @@ export default {
         meText.value.style.color = "#409eff";
         meImg.value.style.backgroundImage = "url(/people_fill.png)";
         title.value = "我";
-        router.push("/index/Me");
+        //使用replace将不会留下历史记录
+        router.replace("/index/Me");
       } else {
         meText.value.style.color = "rgb(0,0,0)";
         meImg.value.style.backgroundImage = "url(/people.png)";

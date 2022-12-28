@@ -58,7 +58,7 @@ export default {
       //配置请求信息
       let config = {
         method: "post",
-        url: "http://localhost/loginApi",
+        url: "http://192.168.1.134/loginApi",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
@@ -72,8 +72,8 @@ export default {
       //判断是否登录成功
       if (response.data == true) {
         ElMessage({ message: "登录成功", type: "success" });
-        //登录成功跳到主页
-        router.push("/");
+        //登录成功跳到主页，使用replace将不会留下历史记录
+        router.replace("/");
       } else {
         //登录失败恢复原状态
         loading.value = false;
