@@ -5,6 +5,9 @@ import test from "../components/test.vue";
 import Message from "../components/Message.vue"
 import Contact from "../components/Contact.vue"
 import Me from "../components/Me.vue"
+import axios from "axios"
+// 全局设置 axios 发送请求带上cookie
+axios.defaults.withCredentials = true
 const routes = [
   {
     path: "/",
@@ -51,21 +54,30 @@ const router = createRouter({
   routes,
 });
 //全局路由守卫
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   //to: 即将要进入的目标
   //from: 当前导航正要离开的路由 
   //返回 false 以取消导航
   //返回一个路由地址: 通过一个路由地址跳转到一个不同的地址
-  //从登录页面离开后延迟刷新下页面，防止出bug
-  if (from.name == "login") {
-    setTimeout(() => {
-      location.reload()
-    }, 10);
-  }
+
   //进入非登录页面时需要验证权限
   if (to.name != "login") {
+    //创建请求配置对象
+    let config = {
+      method: 'post',
+      url: 'http://192.168.1.134/permissionsApi',
+      headers: {}
+    };
+    let response = await axios(config)
     //判断是否有权限
-    if (true) {
+    console.log(response.data)
+    if (response.data) {
+      //从登录页面离开后延迟刷新下页面，防止出bug
+      if (from.name == "login") {
+        setTimeout(() => {
+          location.reload()
+        }, 10);
+      }
       //放行
       return true
     } else {

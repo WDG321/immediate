@@ -5,30 +5,44 @@ import com.example.server.mappers.userMapper;
 import com.example.server.sqlSession.getSqlSession;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 @Controller
 public class login {
     //@CrossOrigin用于设置允许跨域
-    @CrossOrigin
+    @CrossOrigin()
     @ResponseBody
     @RequestMapping(value = "/loginApi", method = RequestMethod.POST)
-    public boolean loginApi(String username, String password) {
+    public boolean loginApi(HttpServletRequest request, @RequestParam("username") String username, @RequestParam("password") String password) {
+
+        HttpSession Session = request.getSession();
+        System.out.println("旧Session的id为" + Session.getId());
+        //杀死上一个Session,以免浪费内存
+        Session.invalidate();
         //通过工具类获取sqlSession对象
         SqlSession sqlSession = getSqlSession.getSqlSession();
         //通过代理模式创建UserMapper接口的代理实现类对象
         userMapper mapper = sqlSession.getMapper(userMapper.class);
         //通过mybatis查询数据库
-        user user = mapper.login(username, password);
-        if (user == null) {
+        user userObj = mapper.login(username, password);
+        if (userObj == null) {
+            //为null则表示数据库没有匹配的数据
+            //代表登陆失败
             return false;
         } else {
+            //登陆成功则给予一个新Session
+            Session = request.getSession();
+            System.out.println("新Session的id为" + Session.getId());
+            //添加数据
+            Session.setAttribute("name", userObj.getUsername());
+            //获取数据
+            System.out.println(Session.getAttribute("name"));
+            System.out.println("新Session最大有效期为" + Session.getServletContext().getSessionTimeout() + "分钟");
             return true;
         }
-
     }
 }

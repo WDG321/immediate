@@ -71,7 +71,6 @@ export default {
       let response = await axios(config);
       //判断是否登录成功
       if (response.data == true) {
-        ElMessage({ message: "登录成功", type: "success" });
         //登录成功跳到主页，使用replace将不会留下历史记录
         router.replace("/");
       } else {
