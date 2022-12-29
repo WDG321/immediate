@@ -71,6 +71,8 @@ export default {
       let response = await axios(config);
       //判断是否登录成功
       if (response.data == true) {
+        //播放加载中动画
+        ElLoading.service()
         //登录成功跳到主页，使用replace将不会留下历史记录
         router.replace("/");
       } else {

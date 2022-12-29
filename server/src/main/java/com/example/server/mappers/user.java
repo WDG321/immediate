@@ -4,21 +4,7 @@ public class user {
     private int id;
     private String username;
     private String password;
-
-    @Override
-    public String toString() {
-        return "user{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
-
-    public user(int id, String username, String password) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-    }
+    private String profilePhoto;
 
     public int getId() {
         return id;
@@ -42,5 +28,30 @@ public class user {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProfilePhoto() {
+        return profilePhoto;
+    }
+
+    public void setProfilePhoto(String profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
+
+    public user(int id, String username, String password, String profilePhoto) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.profilePhoto = profilePhoto;
+    }
+
+    @Override
+    public String toString() {
+        return "user{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", profilePhoto='" + profilePhoto + '\'' +
+                '}';
     }
 }

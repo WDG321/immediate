@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>头像</div>
+    <img :src="profilePhoto" />
     <div>
       <div>{{ username }}</div>
       <div>id:{{ id }}</div>
@@ -14,8 +14,12 @@ import axios from "axios";
 export default {
   name: "Me",
   setup() {
+    //昵称
     let username = ref(null);
+    //id
     let id = ref(null);
+    //头像地址
+    let profilePhoto = ref(null);
     onMounted(async () => {
       //创建请求配置对象
       let config = {
@@ -28,8 +32,9 @@ export default {
       //获取数据
       username.value = response.data.username;
       id.value = response.data.id;
+      profilePhoto.value = response.data.profilePhoto;
     });
-    return { username, id };
+    return { username, id, profilePhoto };
   },
 };
 </script>

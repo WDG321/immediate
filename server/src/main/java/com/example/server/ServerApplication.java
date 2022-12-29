@@ -20,7 +20,7 @@ public class ServerApplication {
 
     /*配合前端vue使用非哈希模式的路由
     * SpringBoot默认匹配不到URL时，会返回一个默认的页面，所以可以配置一下默认的配置Bean。
-    * 这个页面就是你 app 依赖的页面，为index.html*/
+    * 这个默认页面就是你 app 依赖的页面，为index.html*/
     @Bean
     public WebServerFactoryCustomizer<ConfigurableWebServerFactory> webServerFactoryCustomizer() {
         return new WebServerFactoryCustomizer<ConfigurableWebServerFactory>() {

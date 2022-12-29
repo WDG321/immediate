@@ -21,7 +21,8 @@ public class me {
             //获取数据
             String username = (String) Session.getAttribute("username");
             int id = (int) Session.getAttribute("id");
-            return new userInformation(username, id);
+            String profilePhoto = (String) Session.getAttribute("profilePhoto");
+            return new userInformation(username, id, profilePhoto);
         } else {
             return null;
         }

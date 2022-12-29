@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: server
+server:
+  port: 80
+  tomcat:
+    uri-encoding: UTF-8
+  servlet:
+    session:
+      timeout: 6000s #session过期时间
+file-save-path: D:/images/

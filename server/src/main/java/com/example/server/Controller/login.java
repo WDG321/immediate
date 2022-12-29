@@ -41,6 +41,7 @@ public class login {
             //添加数据
             Session.setAttribute("username", userObj.getUsername());
             Session.setAttribute("id", userObj.getId());
+            Session.setAttribute("profilePhoto", userObj.getProfilePhoto());
             //获取数据
             System.out.println("Session最大有效期为" + Session.getServletContext().getSessionTimeout() + "分钟");
             return true;
