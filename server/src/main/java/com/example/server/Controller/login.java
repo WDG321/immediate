@@ -13,16 +13,11 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class login {
-    //@CrossOrigin用于设置允许跨域
-    @CrossOrigin()
+    //@CrossOrigin用于设置允许跨域,但无法解决cookie问题
+    //@CrossOrigin()
     @ResponseBody
     @RequestMapping(value = "/loginApi", method = RequestMethod.POST)
     public boolean loginApi(HttpServletRequest request, @RequestParam("username") String username, @RequestParam("password") String password) {
-
-        HttpSession Session = request.getSession();
-        System.out.println("旧Session的id为" + Session.getId());
-        //杀死上一个Session,以免浪费内存
-        Session.invalidate();
         //通过工具类获取sqlSession对象
         SqlSession sqlSession = getSqlSession.getSqlSession();
         //通过代理模式创建UserMapper接口的代理实现类对象
@@ -34,14 +29,20 @@ public class login {
             //代表登陆失败
             return false;
         } else {
-            //登陆成功则给予一个新Session
-            Session = request.getSession();
-            System.out.println("新Session的id为" + Session.getId());
+            //获取Session
+            HttpSession Session = request.getSession();
+            //判断是否是新的Session
+            if (!Session.isNew()) {
+                //杀死旧的Session,以免浪费内存
+                Session.invalidate();
+                //重新给个Session
+                Session = request.getSession();
+            }
             //添加数据
-            Session.setAttribute("name", userObj.getUsername());
+            Session.setAttribute("username", userObj.getUsername());
+            Session.setAttribute("id", userObj.getId());
             //获取数据
-            System.out.println(Session.getAttribute("name"));
-            System.out.println("新Session最大有效期为" + Session.getServletContext().getSessionTimeout() + "分钟");
+            System.out.println("Session最大有效期为" + Session.getServletContext().getSessionTimeout() + "分钟");
             return true;
         }
     }

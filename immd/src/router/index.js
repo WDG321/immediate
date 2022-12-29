@@ -66,8 +66,8 @@ router.beforeEach(async (to, from) => {
     let config = {
       method: 'post',
       url: 'http://192.168.1.134/permissionsApi',
-      headers: {}
     };
+    //发送请求
     let response = await axios(config)
     //判断是否有权限
     console.log(response.data)
