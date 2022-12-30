@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
+
 /*处理头像上传*/
 @Controller
 public class profilePhotoUpload {
@@ -29,6 +31,14 @@ public class profilePhotoUpload {
     @ResponseBody
     @RequestMapping(value = "/profilePhotoUploadApi")
     public String profilePhotoUploadApi(MultipartFile profilePhoto, HttpServletRequest request) {
+        //使用request对象的getSession()获取session，如果session不存在则创建一个
+        //参数设置为false的话就不会创建新的，而是返回null
+        HttpSession Session = request.getSession(false);
+        //判断是否登录或者是否登录过期
+        if (Session == null) {
+            //未登录就不进行操作了
+            return "请登录";
+        }
         //没有数据则返回提示
         if (profilePhoto == null) {
             return "请上传头像";

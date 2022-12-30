@@ -1,5 +1,5 @@
 <template>
-  <TopBar></TopBar>
+  <TopBar :style="topBarVisibility"></TopBar>
 
   <!-- vue3.0配置缓存组件，不进行销毁 -->
   <router-view v-slot="{ Component }">
@@ -36,11 +36,17 @@ export default {
     let messageScrollDistance = ref(0);
     //设置Contact页面的滚动距离
     let contactScrollDistance = ref(0);
+    //设置Me页面的滚动距离
+    let meScrollDistance = ref(0);
+    //设置TopBar是否隐藏,默认不隐藏
+    let topBarVisibility = ref("visibility: visible");
     //父组件有一个 `provide` 选项来提供数据给后代组件
     provide("title", title); //provide接收两个参数，参数1为数据起名，参数二为需要传入的数据
     provide("messageScrollDistance", messageScrollDistance);
     provide("contactScrollDistance", contactScrollDistance);
-    return {};
+    provide("meScrollDistance", meScrollDistance);
+    provide("topBarVisibility", topBarVisibility);
+    return { topBarVisibility };
   },
   //注册组件
   components: {

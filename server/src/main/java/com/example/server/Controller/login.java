@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-
+/*登录功能*/
 @Controller
 public class login {
     //@CrossOrigin用于设置允许跨域,但无法解决cookie问题
@@ -43,6 +43,7 @@ public class login {
             Session.setAttribute("id", userObj.getId());
             Session.setAttribute("profilePhoto", userObj.getProfilePhoto());
             //获取数据
+            System.out.println(Session.getAttribute("username") + "已登录");
             System.out.println("Session最大有效期为" + Session.getServletContext().getSessionTimeout() + "分钟");
             return true;
         }

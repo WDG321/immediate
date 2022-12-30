@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
+/*处理通行权限*/
 @Controller
 public class permissions {
     //通过session是否过期来判断是否有权限

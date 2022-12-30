@@ -45,6 +45,12 @@ public class user {
         this.profilePhoto = profilePhoto;
     }
 
+    public user(int id, String username, String profilePhoto) {
+        this.id = id;
+        this.username = username;
+        this.profilePhoto = profilePhoto;
+    }
+
     @Override
     public String toString() {
         return "user{" +

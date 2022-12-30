@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
+/*读取硬盘中的图片并返回给客户端*/
 @Controller
 public class test {
     @ResponseBody

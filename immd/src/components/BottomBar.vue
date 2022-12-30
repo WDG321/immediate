@@ -32,6 +32,7 @@ export default {
     const meImg = ref(null);
     const meText = ref(null);
     let meMark = ref(null);
+    //控制初始选择
     onMounted(() => {
       messageMark.value = true;
       contactMark.value = false;
@@ -76,14 +77,20 @@ export default {
         contactImg.value.style.backgroundImage = "url(/group.png)";
       }
     });
+    //使用inject函数接收祖先组件使用provide函数传递的数据
+    let topBarVisibility = inject("topBarVisibility");
     watch(meMark, () => {
       if (meMark.value == true) {
         meText.value.style.color = "#409eff";
         meImg.value.style.backgroundImage = "url(/people_fill.png)";
         title.value = "我";
+        //隐藏topBar
+        topBarVisibility.value = "visibility: hidden";
         //使用replace将不会留下历史记录
         router.replace("/index/Me");
       } else {
+        //显示topBar
+        topBarVisibility.value = "visibility: visible";
         meText.value.style.color = "rgb(0,0,0)";
         meImg.value.style.backgroundImage = "url(/people.png)";
       }

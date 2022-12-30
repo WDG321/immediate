@@ -14,15 +14,16 @@ const routes = [
     component: index,
   },
   {
+    name: "test",
+    path: "/test",
+    component: test
+  },
+  {
     name: "index",
     path: "/index",
     component: index,
     //配置子路由
     children: [{
-      name: "test",
-      path: "test",
-      component: test
-    }, {
       name: "Message",
       path: "Message",
       component: Message,
@@ -70,7 +71,6 @@ router.beforeEach(async (to, from) => {
     //发送请求
     let response = await axios(config)
     //判断是否有权限
-    console.log(response.data)
     if (response.data) {
       //从登录页面离开后延迟刷新下页面，防止出bug
       if (from.name == "login") {
