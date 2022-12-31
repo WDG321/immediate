@@ -1,12 +1,17 @@
 package com.example.server.WebSocket;
 
 import com.example.server.WebSocketConfig;
+import com.example.server.entity.contactIdOrMessage;
+import com.example.server.entity.user;
+import com.example.server.util.ObjectMapperUtil;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -26,9 +31,10 @@ public class WebSocketServer {
         /*思路：连接成功后把session的id保存起来并绑定用户，断开后就赋值null，以此来判断是否在线，以及指定用户发送消息*/
         //获取httpSession
         HttpSession httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
-        System.out.println("httpSession的id："+httpSession.getId());
-        //把客户端连接对象与id绑定存入map
-        SessionMap.put(session, (Integer) httpSession.getAttribute("id"));
+        System.out.println("httpSession的id：" + httpSession.getId());
+        //把客户端连接对象与httpSession里面储存的id绑定存入map
+        user userObj = (user) httpSession.getAttribute("userObj");
+        SessionMap.put(session, userObj.getId());
         //getBasicRemote()为同步发送,需要等待上一条发送完毕才能接着发送，就像排队上厕所
         //session.getBasicRemote().sendText("恭喜连接成功"); //向该Session连接的用户发送字符串数据。
         //getAsyncRemote()为异步发送,无需等待，直接发送，通常都是使用这种方式
@@ -51,7 +57,7 @@ public class WebSocketServer {
     //发生错误时调用
     @OnError
     public void onError(Throwable error) {
-        System.out.println("发生错误了："+error);
+        System.out.println("发生错误了：" + error);
     }
 
     /**
@@ -59,7 +65,27 @@ public class WebSocketServer {
      * message为客户端发送过来的消息
      */
     @OnMessage
-    public void onMessage(String message) {
+    public void onMessage(String message, Session session) {
         System.out.println("【websocket消息】收到客户端发来的消息:{" + message + "}");
+        //把消息序列化为对象
+        contactIdOrMessage messageObj = ObjectMapperUtil.toObj(message, contactIdOrMessage.class);
+        //发送消息给指定用户
+        boolean b = designatedIdSend(messageObj.getContactId(), messageObj.getMessage());
+        //处理用户不在线的情况
+        if (!b) {
+            System.out.println("该用户不在线,发送失败");
+        }
+    }
+
+    //定义一个指定id发送信息的方法,用户不在线就返回false
+    private boolean designatedIdSend(int id, String message) {
+        //entrySet();返回当前map对象中所有key-value对构成的Set集合
+        for (Map.Entry<Session, Integer> entry : SessionMap.entrySet()) {
+            if (entry.getValue() == id) {
+                entry.getKey().getAsyncRemote().sendText(message);
+                return true;
+            }
+        }
+        return false;
     }
 }

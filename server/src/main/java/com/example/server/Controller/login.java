@@ -1,9 +1,8 @@
 package com.example.server.Controller;
 
-import com.example.server.mappers.user;
+import com.example.server.entity.user;
 import com.example.server.mappers.userMapper;
-import com.example.server.sqlSession.getSqlSession;
-import org.apache.ibatis.session.SqlSession;
+import com.example.server.util.SqlSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ public class login {
     @RequestMapping(value = "/loginApi", method = RequestMethod.POST)
     public boolean loginApi(HttpServletRequest request, @RequestParam("username") String username, @RequestParam("password") String password) {
         //通过工具类获取sqlSession对象
-        SqlSession sqlSession = getSqlSession.getSqlSession();
+        org.apache.ibatis.session.SqlSession sqlSession = SqlSession.getSqlSession();
         //通过代理模式创建UserMapper接口的代理实现类对象
         userMapper mapper = sqlSession.getMapper(userMapper.class);
         //通过mybatis查询数据库
@@ -38,12 +37,13 @@ public class login {
                 //重新给个Session
                 Session = request.getSession();
             }
-            //添加数据
-            Session.setAttribute("username", userObj.getUsername());
-            Session.setAttribute("id", userObj.getId());
-            Session.setAttribute("profilePhoto", userObj.getProfilePhoto());
+            //密码不能泄露,所以设置为null
+            userObj.setPassword(null);
+            //把用户数据添加进session
+            Session.setAttribute("userObj", userObj);
             //获取数据
-            System.out.println(Session.getAttribute("username") + "已登录");
+            user userObj1 = (user) Session.getAttribute("userObj");
+            System.out.println(userObj1.getUsername() + "已登录");
             System.out.println("Session最大有效期为" + Session.getServletContext().getSessionTimeout() + "分钟");
             return true;
         }

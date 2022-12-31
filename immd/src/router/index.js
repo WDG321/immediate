@@ -5,6 +5,7 @@ import test from "../components/test.vue";
 import Message from "../components/Message.vue"
 import Contact from "../components/Contact.vue"
 import Me from "../components/Me.vue"
+import contactDetails from "../components/contactDetails.vue"
 import axios from "axios"
 // 全局设置 axios 发送请求带上cookie
 axios.defaults.withCredentials = true
@@ -17,6 +18,11 @@ const routes = [
     name: "test",
     path: "/test",
     component: test
+  },
+  {
+    name: "contactDetails",
+    path: "/contactDetails",
+    component: contactDetails,
   },
   {
     name: "index",

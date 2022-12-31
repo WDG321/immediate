@@ -1,6 +1,6 @@
 <template>
   <input type="text" ref="message" />
-  <button @click="send">发送消息</button>
+  <button @click="send">发送消息给李四</button>
   <button @click="close">关闭连接</button>
   聊天内容显示在下面
   <div class="box" ref="box"></div>
@@ -22,10 +22,16 @@ export default {
         3 连接已关闭或者没有链接成功 
         */
     //console.log(ws.readyState);
+    //定义消息对象
+    const ms = {
+      contactId: 2,
+      message: "你好，李四",
+    };
     //发送消息
     const send = () => {
       //ws.send()给服务器发送信息
-      ws.send(JSON.stringify(message.value.value));
+      //ws.send(JSON.stringify(message.value.value));
+      ws.send(JSON.stringify(ms));
     };
     //关闭连接
     const close = () => {

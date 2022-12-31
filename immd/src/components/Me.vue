@@ -11,30 +11,13 @@
 </template>
 
 <script>
-import { onMounted, ref, reactive, inject, onActivated } from "vue";
-import axios from "axios";
+import { onMounted, ref, reactive, inject } from "vue";
+
 export default {
   name: "Me",
   setup() {
-    const user = reactive({
-      username: null, //昵称
-      id: null, //id
-      profilePhoto: null, //头像地址
-    });
-    onMounted(async () => {
-      //创建请求配置对象
-      let config = {
-        method: "post",
-        url: "http://192.168.1.134/meApi",
-      };
-      //发送请求
-      let response = await axios(config);
-      console.log(response.data);
-      //获取数据
-      user.username = response.data.username;
-      user.id = response.data.id;
-      user.profilePhoto = response.data.profilePhoto;
-    });
+    //后代组件有一个 `inject` 选项来开始使用这些数据
+    let user = inject("user"); //使用inject函数接收祖先组件使用provide函数传递的数据
     const elScrollbar = ref(null);
     //后代组件有一个 `inject` 选项来开始使用这些数据
     let meScrollDistance = inject("meScrollDistance"); //使用inject函数接收祖先组件使用provide函数传递的数据
@@ -42,16 +25,13 @@ export default {
       //记录滚动的距离
       meScrollDistance.value = scrollTop;
     };
-    //路由激活组件时调用
-    onActivated(() => {
-      //更改滚动条位置
-      elScrollbar.value.setScrollTop(meScrollDistance.value);
-    });
     onMounted(() => {
       //document.documentElement.clientHeight为网页可见区域高
       //92.8的来源是顶部导航与底部导航的高度加起来任何乘以16，16为html的字体大小(px),因为使用了rem来设置高度
       elScrollbar.value.wrapRef.style.height =
         document.documentElement.clientHeight - 92.8 + "px";
+      //更改滚动条位置
+      elScrollbar.value.setScrollTop(meScrollDistance.value);
     });
     return { user, elScrollbar, scroll };
   },

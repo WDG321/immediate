@@ -8,10 +8,23 @@
             resultType：设置默认的映射关系，设置把查询结果转换成哪个类的对象,但类的属性名必须与表中的字段名保持一致
             resultMap：设置自定义的映射关系(用于表中的字段名与类的属性名不一致的时候使用)
         -->
-    <select id="login" resultType="com.example.server.mappers.user">/*不使用类型别名*/
+    <!--登录-->
+    <select id="login" resultType="com.example.server.entity.user">/*不使用类型别名*/
     select *
     from user
     where username = #{username}
       and password = #{password}
+    </select>
+    <!--添加联系人-->
+    <update id="addContact">
+        update user
+        set contact = #{contact}
+        where username = #{username}
+    </update>
+    <!--根据用户名查询用户-->
+    <select id="queryUser" resultType="com.example.server.entity.user">/*不使用类型别名*/
+    select *
+    from user
+    where username = #{username}
     </select>
 </mapper>

@@ -1,15 +1,14 @@
-package com.example.server.sqlSession;
+package com.example.server.util;
 
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class getSqlSession {
-    public static SqlSession getSqlSession() {
+public class SqlSession {
+    public static org.apache.ibatis.session.SqlSession getSqlSession() {
         //以字节输入流的形式读取MyBatis的核心配置文件
         InputStream is = null;
         try {
@@ -24,7 +23,7 @@ public class getSqlSession {
         //创建SqlSession对象，此时通过SqlSession对象所操作的sql都必须手动提交或回滚事务
         //SqlSession sqlSession = sqlSessionFactory.openSession();
         //创建SqlSession对象，此时通过SqlSession对象所操作的sql都会自动提交
-        SqlSession sqlSession = sqlSessionFactory.openSession(true);//开启自动提交事务，因为mybatis默认不自动提交事务
+        org.apache.ibatis.session.SqlSession sqlSession = sqlSessionFactory.openSession(true);//开启自动提交事务，因为mybatis默认不自动提交事务
         return sqlSession;
     }
 }

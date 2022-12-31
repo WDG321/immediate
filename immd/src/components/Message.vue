@@ -16,27 +16,27 @@
 </template>
 
 <script>
-import { ref, onMounted, inject, onActivated } from "vue";
+import { ref, onMounted, inject } from "vue";
+import axios from "axios";
 export default {
   name: "Message",
   setup() {
     const elScrollbar = ref(null);
     //后代组件有一个 `inject` 选项来开始使用这些数据
     let messageScrollDistance = inject("messageScrollDistance"); //使用inject函数接收祖先组件使用provide函数传递的数据
+    let user = inject("user");
     const scroll = ({ scrollTop }) => {
       //记录滚动的距离
       messageScrollDistance.value = scrollTop;
     };
-    //路由激活组件时调用
-    onActivated(() => {
-      //更改滚动条位置
-      elScrollbar.value.setScrollTop(messageScrollDistance.value);
-    });
-    onMounted(() => {
+    onMounted(async () => {
       //document.documentElement.clientHeight为网页可见区域高
       //92.8的来源是顶部导航与底部导航的高度加起来任何乘以16，16为html的字体大小(px),因为使用了rem来设置高度
       elScrollbar.value.wrapRef.style.height =
         document.documentElement.clientHeight - 92.8 + "px";
+      //更改滚动条位置
+      elScrollbar.value.setScrollTop(messageScrollDistance.value);
+     
     });
     return { elScrollbar, scroll };
   },
