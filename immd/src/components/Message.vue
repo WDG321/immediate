@@ -29,14 +29,13 @@ export default {
       //记录滚动的距离
       messageScrollDistance.value = scrollTop;
     };
-    onMounted(async () => {
+    onMounted(() => {
       //document.documentElement.clientHeight为网页可见区域高
       //92.8的来源是顶部导航与底部导航的高度加起来任何乘以16，16为html的字体大小(px),因为使用了rem来设置高度
       elScrollbar.value.wrapRef.style.height =
         document.documentElement.clientHeight - 92.8 + "px";
       //更改滚动条位置
       elScrollbar.value.setScrollTop(messageScrollDistance.value);
-     
     });
     return { elScrollbar, scroll };
   },

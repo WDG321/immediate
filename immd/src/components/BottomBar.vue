@@ -139,7 +139,7 @@ export default {
 
 <style scoped>
 .box {
-  width: 100%;
+  width: 100vw;
   background-color: rgb(228, 226, 226);
   display: flex;
   height: 3.5rem;

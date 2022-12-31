@@ -6,6 +6,7 @@ import Message from "../components/Message.vue"
 import Contact from "../components/Contact.vue"
 import Me from "../components/Me.vue"
 import contactDetails from "../components/contactDetails.vue"
+import conversation from "../components/conversation.vue"
 import axios from "axios"
 // 全局设置 axios 发送请求带上cookie
 axios.defaults.withCredentials = true
@@ -23,6 +24,11 @@ const routes = [
     name: "contactDetails",
     path: "/contactDetails",
     component: contactDetails,
+  },
+  {
+    name: "conversation",
+    path: "/conversation",
+    component: conversation
   },
   {
     name: "index",

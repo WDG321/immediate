@@ -14,7 +14,7 @@ export default {
   name: "Contact",
   setup() {
     const router = useRouter();
-    let user = inject("user");
+    const user = inject("user");
     let elScrollbar = ref(null);
     let contactScrollDistance = inject("contactScrollDistance");
     const scroll = ({ scrollTop }) => {
@@ -32,7 +32,11 @@ export default {
     const click = (contact) => {
       console.log("点击了联系人" + contact.username);
       //使用replace将不会留下历史记录
-      router.replace("/contactDetails");
+      router.replace({
+        path: "/contactDetails",
+        //路由传参
+        query: { id: `${contact.id}` },
+      });
     };
     return { elScrollbar, scroll, user, click };
   },
