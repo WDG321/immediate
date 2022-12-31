@@ -17,7 +17,14 @@
 
 <script>
 import { useRouter } from "vue-router";
-import { inject, reactive, ref, onMounted } from "vue";
+import {
+  inject,
+  reactive,
+  ref,
+  onMounted,
+  onBeforeMount,
+  onBeforeUnmount,
+} from "vue";
 export default {
   name: "conversation",
   setup() {
@@ -48,6 +55,7 @@ export default {
     //获取初始窗口高度
     let initHeight =
       document.documentElement.clientHeight || document.body.clientHeight;
+    //组件挂载完毕事件
     onMounted(() => {
       //document.documentElement.clientHeight为网页可见区域高
       //92.8的来源是顶部导航与底部导航的高度加起来任何乘以16，16为html的字体大小(px),因为使用了rem来设置高度
@@ -77,6 +85,12 @@ export default {
         elScrollbar.value.wrapRef.style.height = initHeight - 93 + "px";
       }
     };
+    //组件将要销毁事件
+    onBeforeUnmount(() => {
+      console.log("将要销毁事件");
+      //解绑window.onresize事件，不然在其他页面会出现bug
+      window.onresize = null;
+    });
     return { returnMessage, contact, elScrollbar, inputValue, input };
   },
 };
