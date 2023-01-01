@@ -52,6 +52,10 @@ export default {
         //路由传参
         query: { id: `${contact.id}` },
       });
+      //去了后延迟刷新页面，以更新聊天数据(笨方法，先实现功能，以后再优化)
+      setTimeout(() => {
+        location.reload();
+      }, 10);
     };
     return { returnSontact, contact, sendMessage };
   },

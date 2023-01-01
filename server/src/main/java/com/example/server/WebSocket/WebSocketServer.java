@@ -1,19 +1,19 @@
 package com.example.server.WebSocket;
 
 import com.example.server.WebSocketConfig;
-import com.example.server.entity.contactIdOrMessage;
+import com.example.server.entity.idOrMessage;
 import com.example.server.entity.user;
+import com.example.server.mappers.userMapper;
 import com.example.server.util.ObjectMapperUtil;
+import com.example.server.util.SqlSession;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 @Component
 /*@ServerEndpoint 注解是一个类层次的注解，它的功能主要是将目前的类定义成一个websocket服务器端,
@@ -68,12 +68,48 @@ public class WebSocketServer {
     public void onMessage(String message, Session session) {
         System.out.println("【websocket消息】收到客户端发来的消息:{" + message + "}");
         //把消息序列化为对象
-        contactIdOrMessage messageObj = ObjectMapperUtil.toObj(message, contactIdOrMessage.class);
+        idOrMessage messageObj = ObjectMapperUtil.toObj(message, idOrMessage.class);
+        /*记录对方的id*/
+        int contactId = messageObj.getId();
+        /*获取自己的id*/
+        int userId = 0;
+        for (Map.Entry<Session, Integer> entry : SessionMap.entrySet()) {
+            if (entry.getKey() == session) {
+                userId = entry.getValue();
+                System.out.println("我的id是：" + entry.getValue());
+                break;
+            }
+        }
+        //因为消息内的id是需要向哪个联系人发消息的id，所以需要改为自己的id,因为这里需要发送人的id
+        messageObj.setId(userId);
+        String s2 = ObjectMapperUtil.toJSON(messageObj);
+        //把id变回来，不然会出bug
+        messageObj.setId(contactId);
         //发送消息给指定用户
-        boolean b = designatedIdSend(messageObj.getContactId(), messageObj.getMessage());
-        //处理用户不在线的情况
+        boolean b = designatedIdSend(messageObj.getId(), s2);
+        //处理用户不在线的情况,把消息存入对方的聊天记录当中
         if (!b) {
-            System.out.println("该用户不在线,发送失败");
+            //通过工具类获取sqlSession对象
+            org.apache.ibatis.session.SqlSession sqlSession = SqlSession.getSqlSession();
+            //通过代理模式创建UserMapper接口的代理实现类对象
+            userMapper mapper = sqlSession.getMapper(userMapper.class);
+            //通过id获取对方的聊天记录
+            String s = mapper.queryChatLog(messageObj.getId());
+            //把对方的聊天记录转为集合
+            ArrayList arrayList = ObjectMapperUtil.toObj(s, ArrayList.class);
+            //因为消息内的id是需要向哪个联系人发消息的id，所以需要改为自己的id,因为这里需要发送人的id
+            messageObj.setId(userId);
+            //添加数据到对方的聊天记录当中
+            arrayList.add(messageObj);
+            //变回json
+            String s1 = ObjectMapperUtil.toJSON(arrayList);
+            //把id变回来，不然会出bug
+            messageObj.setId(contactId);
+            //存入对方的数据库当中
+            int i = mapper.addChatLog(messageObj.getId(), s1);
+            //i为1代表成功
+            System.out.println(i);
+            System.out.println("该用户不在线");
         }
     }
 

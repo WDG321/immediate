@@ -11,4 +11,10 @@ public interface userMapper {
 
     //根据用户名查询用户
     user queryUser(String username);
+
+    //根据id添加聊天记录
+    int addChatLog(int id, String chatLog);
+
+    //根据id查询用户的聊天记录
+    String queryChatLog(int id);
 }

@@ -94,7 +94,12 @@ router.beforeEach(async (to, from) => {
       return true
     } else {
       //无权限就跳到登录页面
-      ElMessage.error("未登录，请登录");
+      const elMessageError = ElMessage.error("未登录，请登录");
+      //ElMessage一旦有鼠标或者手指放上去，就不会自动消失了
+      //设置定时器让它消失
+      setTimeout(function () {
+        elMessageError.close();
+      }, 3000);
       return "/login"
     }
   }

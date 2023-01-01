@@ -27,4 +27,16 @@
     from user
     where username = #{username}
     </select>
+    <!--根据id添加聊天记录-->
+    <update id="addChatLog">
+        update user
+        set chatLog = #{chatLog}
+        where id = #{id}
+    </update>
+    <!--根据id查询用户的聊天记录-->
+    <select id="queryChatLog" resultType="String">/*不使用类型别名*/
+    select chatLog
+    from user
+    where id = #{id}
+    </select>
 </mapper>

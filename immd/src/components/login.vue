@@ -49,7 +49,13 @@ export default {
     const login = async () => {
       //判断账户密码是否为空，为空就退出登录函数
       if (username.value == "" || password.value == "") {
-        return ElMessage.error("账号名或密码不能为空");
+        const elMessageError = ElMessage.error("账号名或密码不能为空");
+        //ElMessage一旦有鼠标或者手指放上去，就不会自动消失了
+        //设置定时器让它消失
+        setTimeout(function () {
+          elMessageError.close();
+        }, 3000);
+        return;
       }
       //转为加载中状态
       loading.value = true;
@@ -72,14 +78,19 @@ export default {
       //判断是否登录成功
       if (response.data == true) {
         //播放加载中动画
-        ElLoading.service()
+        ElLoading.service();
         //登录成功跳到主页，使用replace将不会留下历史记录
         router.replace("/");
       } else {
         //登录失败恢复原状态
         loading.value = false;
         buttonText.value = "登录";
-        ElMessage.error("账号名或密码错误");
+        const elMessageError = ElMessage.error("账号名或密码错误");
+        //ElMessage一旦有鼠标或者手指放上去，就不会自动消失了
+        //设置定时器让它消失
+        setTimeout(function () {
+          elMessageError.close();
+        }, 3000);
       }
     };
     //处理账号Input内容更改事件

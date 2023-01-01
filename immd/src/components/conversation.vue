@@ -7,6 +7,16 @@
   <!-- 滚动框 -->
   <el-scrollbar class="elScrollbar" ref="elScrollbar" :noresize="true">
     <!-- 聊天信息展示区 -->
+    <div v-for="i in user.chatLog">
+      <div v-if="i.id == user.id" class="userMessageBox">
+        <div class="userMessageText">{{ i.message }}</div>
+        <img :src="user.profilePhoto" class="userProfilePhoto" />
+      </div>
+      <div v-else-if="i.id == contact.id" class="contactMessageBox">
+        <img :src="contact.profilePhoto" class="contactProfilePhoto" />
+        <div class="contactMessageText">{{ i.message }}</div>
+      </div>
+    </div>
   </el-scrollbar>
   <div class="box02">
     <input v-model="inputValue" class="input" />
@@ -27,17 +37,20 @@ import {
   onBeforeUnmount,
   watch,
 } from "vue";
+import axios from "axios";
 export default {
   name: "conversation",
   setup() {
     //输入框内容
     let inputValue = ref("");
+    //自己的信息
     const user = inject("user");
     const router = useRouter();
-    //存储标记对象,用于控制底部导航的选择状态
+    //标记对象,用于控制底部导航的选择状态
     const mark = inject("mark");
     //滚动区域
     const elScrollbar = ref(null);
+    //返回之前的页面
     const returnMessage = () => {
       mark.messageMark = true;
       mark.contactMark = false;
@@ -64,6 +77,9 @@ export default {
       //document.documentElement.clientHeight为网页可见区域高
       //92.8的来源是顶部导航与底部导航的高度加起来任何乘以16，16为html的字体大小(px),因为使用了rem来设置高度
       elScrollbar.value.wrapRef.style.height = initHeight - 93 + "px";
+      //更改滚动条位置,使之滚动到底
+      //scrollHeight为获取对象的滚动高度
+      elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
     });
 
     //window.onresize事件会在窗口或框架被调整大小时发生。
@@ -89,12 +105,33 @@ export default {
         elScrollbar.value.wrapRef.style.height = initHeight - 93 + "px";
       }
     };
+    //定义存储聊天记录的对象
+    let chatLog = inject("chatLog");
+
     //组件将要销毁事件
-    onBeforeUnmount(() => {
+    onBeforeUnmount(async () => {
       console.log("将要销毁事件");
       //解绑window.onresize事件，不然在其他页面会出现bug
       window.onresize = null;
+      if (chatLog.length > 0) {
+        //定义请求配置对象
+        let config = {
+          method: "post",
+          url: "http://192.168.1.134/addChatLogApi",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          data: {
+            message: JSON.stringify(chatLog),
+          },
+        };
+        //发送聊天记录
+        await axios(config);
+        //发送后需要清空,不然会出bug
+        chatLog.length = 0;
+      }
     });
+
     //获取WebSocket链接对象
     const ws = inject("ws");
     const sendMessage = () => {
@@ -105,11 +142,17 @@ export default {
       }
       //连接失败就不往下执行了
       if (ws === false) {
-        return ElMessage.error("网络连接失败,请刷新重试");
+        const elMessageError = ElMessage.error("网络连接失败,请刷新重试");
+        //ElMessage一旦有鼠标或者手指放上去，就不会自动消失了
+        //设置定时器让它消失
+        setTimeout(function () {
+          elMessageError.close();
+        }, 3000);
+        return;
       }
-      //定义消息对象
+      //定义发送的消息对象
       const ms = {
-        contactId: contact.id,
+        id: contact.id,
         message: inputValue.value,
       };
       //发送消息
@@ -130,6 +173,13 @@ export default {
       box03.appendChild(contactProfilePhoto);
       //appendChild是向元素中添加元素，添加到末尾
       elScrollbar.value.wrapRef.appendChild(box03);
+      //更改滚动条位置,使之滚动到底
+      //scrollHeight为获取对象的滚动高度
+      elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
+      //向聊天记录里面添加信息
+      chatLog.push({ message: inputValue.value, id: user.id });
+      console.log(chatLog);
+      //清空输入框信息
       inputValue.value = "";
     };
     let serverMessage = inject("serverMessage");
@@ -152,14 +202,19 @@ export default {
       box03.appendChild(text);
       //appendChild是向元素中添加元素，添加到末尾
       elScrollbar.value.wrapRef.appendChild(box03);
+      //更改滚动条位置,使之滚动到底
+      //scrollHeight为获取对象的滚动高度
+      elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
+      console.log(chatLog);
     });
+
     return {
       returnMessage,
       contact,
       elScrollbar,
       inputValue,
       sendMessage,
-      box03,
+      user,
     };
   },
 };
@@ -213,5 +268,30 @@ export default {
 .button {
   margin-right: 1rem;
   width: 20vw;
+}
+.userMessageBox {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.contactMessageBox {
+  display: flex;
+  align-items: center;
+}
+.userMessageText {
+}
+.userProfilePhoto {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+}
+.contactProfilePhoto {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+}
+.contactMessageText {
 }
 </style>

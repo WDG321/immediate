@@ -29,5 +29,5 @@ public class user {
     private String password;
     private String profilePhoto;//头像地址
     private String contact;//联系人列表
-
+    private String chatLog;//聊天记录
 }

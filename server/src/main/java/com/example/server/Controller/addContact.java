@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 
-/*处理添加好友(未完成)*/
+/*处理添加好友(未完成),还需要判断是否登录，以及动态*/
 @Controller
 public class addContact {
     @ResponseBody
@@ -23,9 +23,10 @@ public class addContact {
         userMapper mapper = sqlSession.getMapper(userMapper.class);
         //查询要添加用户
         user userObj = mapper.queryUser("张三");
-        //密码和联系人列表不能保存进去,所以设置为null
+        //密码和联系人和聊天记录列表不能保存进去,所以设置为null
         userObj.setPassword(null);
         userObj.setContact(null);
+        userObj.setChatLog(null);
         //获取当前用户的联系人列表信息,并转为list
         String contact = "[]";//注册时记得把联系人列表信息设置为[],不然以后会出bug
         ArrayList contactObj = ObjectMapperUtil.toObj(contact, ArrayList.class);
