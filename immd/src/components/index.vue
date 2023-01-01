@@ -1,23 +1,6 @@
 <template>
   <TopBar :style="topBarVisibility"></TopBar>
-
-  <!-- vue3.0配置缓存组件，不进行销毁 -->
-  <!-- <router-view v-slot="{ Component }">
-    <keep-alive>
-      <component
-        :is="Component"
-        :key="$route.name"
-        v-if="$route.meta.keepAlive"
-      />
-    </keep-alive>
-    <component
-      :is="Component"
-      :key="$route.name"
-      v-if="!$route.meta.keepAlive"
-    />
-  </router-view> -->
   <router-view></router-view>
-
   <BottomBar class="BottomBar"></BottomBar>
 </template>
 

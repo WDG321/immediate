@@ -13,7 +13,7 @@ export default {
   setup() {
     let box = ref(null);
     let message = ref(null);
-    // 建立链接
+    // 建立WebSocket链接
     let ws = new WebSocket("ws://192.168.1.134/websocket");
     /* ws.readyState的值为以下其中之一：
         0 正在链接中
@@ -33,7 +33,7 @@ export default {
       //ws.send(JSON.stringify(message.value.value));
       ws.send(JSON.stringify(ms));
     };
-    //关闭连接
+    //关闭连接方法
     const close = () => {
       ws.close();
     };

@@ -38,7 +38,7 @@ public class WebSocketServer {
         //getBasicRemote()为同步发送,需要等待上一条发送完毕才能接着发送，就像排队上厕所
         //session.getBasicRemote().sendText("恭喜连接成功"); //向该Session连接的用户发送字符串数据。
         //getAsyncRemote()为异步发送,无需等待，直接发送，通常都是使用这种方式
-        session.getAsyncRemote().sendText("恭喜连接成功"); //向该Session连接的用户发送字符串数据。
+        //session.getAsyncRemote().sendText("恭喜连接成功"); //向该Session连接的用户发送字符串数据。
         //.size()方法用于获取set数据结构的值的个数
         System.out.println("【websocket消息】有新的连接, 总数:{" + SessionMap.size() + "}");
         SessionMap.forEach((k, v) -> System.out.println("key = " + k + ", value = " + v));
