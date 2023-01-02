@@ -48,14 +48,14 @@ export default {
     const sendMessage = () => {
       //使用replace将不会留下历史记录
       router.replace({
-        path: "/conversation",
+        name: "conversation",
         //路由传参
         query: { id: `${contact.id}` },
       });
       //去了后延迟刷新页面，以更新聊天数据(笨方法，先实现功能，以后再优化)
-      setTimeout(() => {
+      /* setTimeout(() => {
         location.reload();
-      }, 10);
+      }, 10); */
     };
     return { returnSontact, contact, sendMessage };
   },

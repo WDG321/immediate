@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /*把聊天记录添加到数据库*/
 @Controller
@@ -28,29 +27,26 @@ public class addChatLog {
         if (Session != null) {
             //获取保存在session里的用户信息
             user userObj = (user) Session.getAttribute("userObj");
-            //获取session里的聊天记录
-            String userObjChatLog = userObj.getChatLog();
+            //通过工具类获取sqlSession对象
+            org.apache.ibatis.session.SqlSession sqlSession = SqlSession.getSqlSession();
+            //通过代理模式创建UserMapper接口的代理实现类对象
+            userMapper mapper = sqlSession.getMapper(userMapper.class);
+            //获取自己数据库里的聊天记录
+            String userChatLog = mapper.queryChatLog(userObj.getId());
             //把聊天记录从json转为ArrayList
-            ArrayList userObjChatLogArrayList = ObjectMapperUtil.toObj(userObjChatLog, ArrayList.class);
+            ArrayList userChatLogArrayList = ObjectMapperUtil.toObj(userChatLog, ArrayList.class);
             //获取客户端传来的新的聊天记录并转为ArrayList集合
             ArrayList chatLog = ObjectMapperUtil.toObj(message, ArrayList.class);
             //使用循环进行添加
             for (int i = 0; i < chatLog.size(); i++) {
                 //把新的记录添加到旧的里面
                 //add方法：如果 index 没有传入实际参数，元素将追加至数组的最末尾。
-                userObjChatLogArrayList.add(chatLog.get(i));
+                userChatLogArrayList.add(chatLog.get(i));
             }
             //把聊天记录转为json
-            String s = ObjectMapperUtil.toJSON(userObjChatLogArrayList);
+            String s = ObjectMapperUtil.toJSON(userChatLogArrayList);
             //向数据库中添加聊天记录
-            //通过工具类获取sqlSession对象
-            org.apache.ibatis.session.SqlSession sqlSession = SqlSession.getSqlSession();
-            //通过代理模式创建UserMapper接口的代理实现类对象
-            userMapper mapper = sqlSession.getMapper(userMapper.class);
-            //添加数据
             mapper.addChatLog(userObj.getId(), s);
-            //更新Session里存储的聊天记录
-            ((user) Session.getAttribute("userObj")).setChatLog(s);
             return true;
         } else {
             /*未登录就返回false*/

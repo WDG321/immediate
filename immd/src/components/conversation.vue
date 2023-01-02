@@ -45,6 +45,7 @@ export default {
     let inputValue = ref("");
     //自己的信息
     const user = inject("user");
+    console.log("conversation", user);
     const router = useRouter();
     //标记对象,用于控制底部导航的选择状态
     const mark = inject("mark");
@@ -80,8 +81,8 @@ export default {
       //更改滚动条位置,使之滚动到底
       //scrollHeight为获取对象的滚动高度
       elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
+      console.log("conversationonMounted", user);
     });
-
     //window.onresize事件会在窗口或框架被调整大小时发生。
     window.onresize = function () {
       //键盘弹起或者收起来引起的窗口高度的变化，再次获取下窗口高度和进入页面的时候获取的的窗口进行对比
@@ -107,10 +108,9 @@ export default {
     };
     //定义存储聊天记录的对象
     let chatLog = inject("chatLog");
-
+    console.log("存储聊天记录的对象", chatLog);
     //组件将要销毁事件
     onBeforeUnmount(async () => {
-      console.log("将要销毁事件");
       //解绑window.onresize事件，不然在其他页面会出现bug
       window.onresize = null;
       if (chatLog.length > 0) {
@@ -129,6 +129,7 @@ export default {
         await axios(config);
         //发送后需要清空,不然会出bug
         chatLog.length = 0;
+        console.log("组件将要销毁时发送成功", chatLog);
       }
     });
 
@@ -178,7 +179,7 @@ export default {
       elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
       //向聊天记录里面添加信息
       chatLog.push({ message: inputValue.value, id: user.id });
-      console.log(chatLog);
+      console.log("向聊天记录里面添加信息", chatLog);
       //清空输入框信息
       inputValue.value = "";
     };
@@ -186,7 +187,6 @@ export default {
     let box03 = ref(null);
     //监听消息变化
     watch(serverMessage, () => {
-      console.log("消息变化了");
       //创建并添加元素
       const box03 = document.createElement("div");
       box03.style = "display: flex; align-items: center;";
@@ -205,7 +205,6 @@ export default {
       //更改滚动条位置,使之滚动到底
       //scrollHeight为获取对象的滚动高度
       elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
-      console.log(chatLog);
     });
 
     return {

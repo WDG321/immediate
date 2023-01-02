@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
     注解的值将被用于监听用户连接的终端访问URL地址,客户端可以通过这个URL来连接到WebSocket服务器端*/
 @ServerEndpoint(value = "/websocket", configurator = WebSocketConfig.class)  // 接口路径 ws://localhost/webSocket;
 public class WebSocketServer {
+    //用于记录自己的id
+    private int userId;
     //存放客户端连接对象的集合,使用线程安全的concurrent包下的set
     private static final ConcurrentHashMap<Session, Integer> SessionMap = new ConcurrentHashMap<>();
 
@@ -32,9 +34,11 @@ public class WebSocketServer {
         //获取httpSession
         HttpSession httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
         System.out.println("httpSession的id：" + httpSession.getId());
-        //把客户端连接对象与httpSession里面储存的id绑定存入map
         user userObj = (user) httpSession.getAttribute("userObj");
-        SessionMap.put(session, userObj.getId());
+        //获取自己的id
+        userId = userObj.getId();
+        //把客户端连接对象与httpSession里面储存的id绑定存入map
+        SessionMap.put(session, userId);
         //getBasicRemote()为同步发送,需要等待上一条发送完毕才能接着发送，就像排队上厕所
         //session.getBasicRemote().sendText("恭喜连接成功"); //向该Session连接的用户发送字符串数据。
         //getAsyncRemote()为异步发送,无需等待，直接发送，通常都是使用这种方式
@@ -71,15 +75,6 @@ public class WebSocketServer {
         idOrMessage messageObj = ObjectMapperUtil.toObj(message, idOrMessage.class);
         /*记录对方的id*/
         int contactId = messageObj.getId();
-        /*获取自己的id*/
-        int userId = 0;
-        for (Map.Entry<Session, Integer> entry : SessionMap.entrySet()) {
-            if (entry.getKey() == session) {
-                userId = entry.getValue();
-                System.out.println("我的id是：" + entry.getValue());
-                break;
-            }
-        }
         //因为消息内的id是需要向哪个联系人发消息的id，所以需要改为自己的id,因为这里需要发送人的id
         messageObj.setId(userId);
         String s2 = ObjectMapperUtil.toJSON(messageObj);
@@ -97,6 +92,7 @@ public class WebSocketServer {
             String s = mapper.queryChatLog(messageObj.getId());
             //把对方的聊天记录转为集合
             ArrayList arrayList = ObjectMapperUtil.toObj(s, ArrayList.class);
+            System.out.println(arrayList);
             //因为消息内的id是需要向哪个联系人发消息的id，所以需要改为自己的id,因为这里需要发送人的id
             messageObj.setId(userId);
             //添加数据到对方的聊天记录当中
@@ -108,7 +104,7 @@ public class WebSocketServer {
             //存入对方的数据库当中
             int i = mapper.addChatLog(messageObj.getId(), s1);
             //i为1代表成功
-            System.out.println(i);
+            //System.out.println(i);
             System.out.println("该用户不在线");
         }
     }

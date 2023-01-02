@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { ref, reactive, provide, onMounted, watch } from "vue";
+import { ref, reactive, provide, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 export default {
@@ -17,6 +17,7 @@ export default {
       contact: null, //联系人列表
       chatLog: null, //聊天记录
     });
+    
     //存储标记对象,用于控制底部导航的选择状态
     const mark = reactive({
       messageMark: true,
@@ -33,10 +34,9 @@ export default {
     let title = ref(null);
     //设置TopBar是否隐藏,默认不隐藏
     let topBarVisibility = ref("visibility: visible");
-
     //父组件有一个 `provide` 选项来提供数据给后代组件
-    provide("user", user); //provide接收两个参数，参数1为数据起名，参数二为需要传入的数据
-    provide("mark", mark);
+    provide("user", user);
+    provide("mark", mark); //provide接收两个参数，参数1为数据起名，参数二为需要传入的数据
     provide("title", title);
     provide("messageScrollDistance", messageScrollDistance);
     provide("contactScrollDistance", contactScrollDistance);
@@ -48,19 +48,17 @@ export default {
         method: "post",
         url: "http://192.168.1.134/meApi",
       };
-      try {
-      } catch (error) {}
       //发送请求获取用户数据
-      let response = await axios(config);
-      if (response.data != "") {
+      let value = await axios(config);
+      if (value.data != "") {
         //保存用户数据
-        user.username = response.data.username;
-        user.id = response.data.id;
-        user.profilePhoto = response.data.profilePhoto;
-        user.contact = JSON.parse(response.data.contact);
-        user.chatLog = JSON.parse(response.data.chatLog);
+        user.username = value.data.username;
+        user.id = value.data.id;
+        user.profilePhoto = value.data.profilePhoto;
+        user.contact = JSON.parse(value.data.contact);
+        user.chatLog = JSON.parse(value.data.chatLog);
       }
-      console.log(user);
+      console.log("app", user);
     });
     //保存接收到服务端WebSocket的消息对象
     let serverMessage = reactive({
@@ -100,7 +98,7 @@ export default {
     provide("chatLog", chatLog);
     //监听消息变化
     watch(serverMessage, () => {
-      console.log("变化了");
+      console.log("消息变化了", chatLog);
       //向聊天记录里面添加信息
       chatLog.push({
         message: serverMessage.message,
@@ -119,6 +117,8 @@ export default {
           navigator.sendBeacon("http://192.168.1.134/addChatLogApi", data);
         }
       }
+      //关闭WebSocket连接
+      ws.close();
     }
     //离开或刷新页面事件
     document.addEventListener("visibilitychange", logData);

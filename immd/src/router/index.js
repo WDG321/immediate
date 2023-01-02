@@ -24,11 +24,33 @@ const routes = [
     name: "contactDetails",
     path: "/contactDetails",
     component: contactDetails,
+    //路由独享的前置守卫
+    beforeEnter: (to, from) => {
+      //to: 即将要进入的目标
+      //from: 当前导航正要离开的路由 
+      //返回 false 以取消导航
+      //返回一个路由地址: 通过一个路由地址跳转到一个不同的地址
+      //阻止用户通过url直接进入聊天页面
+      if (from.name != "Contact") {
+        return "/index/Message"
+      }
+    },
   },
   {
     name: "conversation",
     path: "/conversation",
-    component: conversation
+    component: conversation,
+    //路由独享的前置守卫
+    beforeEnter: (to, from) => {
+      //to: 即将要进入的目标
+      //from: 当前导航正要离开的路由 
+      //返回 false 以取消导航
+      //返回一个路由地址: 通过一个路由地址跳转到一个不同的地址
+      //阻止用户通过url直接进入聊天页面
+      if (from.name != "contactDetails") {
+        return "/index/Message"
+      }
+    },
   },
   {
     name: "index",
@@ -39,18 +61,14 @@ const routes = [
       name: "Message",
       path: "Message",
       component: Message,
-      //配置是否缓存
-      meta: { keepAlive: true }
     }, {
       name: "Contact",
       path: "Contact",
       component: Contact,
-      meta: { keepAlive: true }
     }, {
       name: "Me",
       path: "Me",
       component: Me,
-      meta: { keepAlive: true }
     }]
   },
   {
@@ -66,13 +84,12 @@ const router = createRouter({
   /* history: createWebHashHistory(), */
   routes,
 });
-//全局路由守卫
+//全局全局前置路由守卫
 router.beforeEach(async (to, from) => {
   //to: 即将要进入的目标
   //from: 当前导航正要离开的路由 
   //返回 false 以取消导航
   //返回一个路由地址: 通过一个路由地址跳转到一个不同的地址
-
   //进入非登录页面时需要验证权限
   if (to.name != "login") {
     //创建请求配置对象
