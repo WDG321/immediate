@@ -17,7 +17,7 @@ export default {
       contact: null, //联系人列表
       chatLog: null, //聊天记录
     });
-    
+
     //存储标记对象,用于控制底部导航的选择状态
     const mark = reactive({
       messageMark: true,
@@ -101,6 +101,11 @@ export default {
       console.log("消息变化了", chatLog);
       //向聊天记录里面添加信息
       chatLog.push({
+        message: serverMessage.message,
+        id: serverMessage.id,
+      });
+      //更新user里的聊天记录,以保证本地的记录实时更新
+      user.chatLog.push({
         message: serverMessage.message,
         id: serverMessage.id,
       });

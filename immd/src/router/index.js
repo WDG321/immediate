@@ -30,7 +30,7 @@ const routes = [
       //from: 当前导航正要离开的路由 
       //返回 false 以取消导航
       //返回一个路由地址: 通过一个路由地址跳转到一个不同的地址
-      //阻止用户通过url直接进入聊天页面
+      //阻止用户通过url直接进入此页面
       if (from.name != "Contact") {
         return "/index/Message"
       }
