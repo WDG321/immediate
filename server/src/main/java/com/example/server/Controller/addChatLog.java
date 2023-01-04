@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /*把聊天记录添加到数据库*/
 @Controller
@@ -23,6 +25,7 @@ public class addChatLog {
         //使用request对象的getSession()获取session，如果session不存在则创建一个
         //参数设置为false的话就不会创建新的，而是返回null
         HttpSession Session = request.getSession(false);
+        System.out.println(message);
         //判断是否登录或者是否登录过期
         if (Session != null) {
             //获取保存在session里的用户信息
@@ -33,18 +36,27 @@ public class addChatLog {
             userMapper mapper = sqlSession.getMapper(userMapper.class);
             //获取自己数据库里的聊天记录
             String userChatLog = mapper.queryChatLog(userObj.getId());
-            //把聊天记录从json转为ArrayList
-            ArrayList userChatLogArrayList = ObjectMapperUtil.toObj(userChatLog, ArrayList.class);
-            //获取客户端传来的新的聊天记录并转为ArrayList集合
-            ArrayList chatLog = ObjectMapperUtil.toObj(message, ArrayList.class);
+            //把自己的聊天记录从json转为HashMap
+            HashMap userChatLogHashMap = ObjectMapperUtil.toObj(userChatLog, HashMap.class);
+            //获取客户端传来的新的聊天记录并转为HashMap
+            HashMap<String, ArrayList> chatLog = ObjectMapperUtil.toObj(message, HashMap.class);
             //使用循环进行添加
-            for (int i = 0; i < chatLog.size(); i++) {
-                //把新的记录添加到旧的里面
-                //add方法：如果 index 没有传入实际参数，元素将追加至数组的最末尾。
-                userChatLogArrayList.add(chatLog.get(i));
+            for (Map.Entry<String, ArrayList> entry : chatLog.entrySet()) {
+                System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                ArrayList o = (ArrayList) userChatLogHashMap.get(String.valueOf(entry.getKey()));
+                System.out.println("o：" + o);
+                //为null则代表第一次发消息
+                if (o != null) {
+                    //向聊天记录后面添加新的聊天记录
+                    o.addAll(entry.getValue());
+                } else {
+                    //添加新的聊天记录
+                    userChatLogHashMap.put(entry.getKey(), entry.getValue());
+                    System.out.println("userChatLogHashMap" + userChatLogHashMap);
+                }
             }
-            //把聊天记录转为json
-            String s = ObjectMapperUtil.toJSON(userChatLogArrayList);
+            //把聊天记录转回json
+            String s = ObjectMapperUtil.toJSON(userChatLogHashMap);
             //向数据库中添加聊天记录
             mapper.addChatLog(userObj.getId(), s);
             return true;

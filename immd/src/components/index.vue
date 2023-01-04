@@ -15,9 +15,10 @@ export default {
     //后代组件有一个 `inject` 选项来开始使用这些数据
     let topBarVisibility = inject("topBarVisibility"); //使用inject函数接收祖先组件使用provide函数传递的数据
     let chatLog = inject("chatLog");
+    // 在组件销毁前执行
     onBeforeUnmount(async () => {
       console.log("index销毁了");
-      if (chatLog.length > 0) {
+      if (JSON.stringify(chatLog.value) != "{}") {
         //定义请求配置对象
         let config = {
           method: "post",
@@ -26,13 +27,13 @@ export default {
             "Content-Type": "application/x-www-form-urlencoded",
           },
           data: {
-            message: JSON.stringify(chatLog),
+            message: JSON.stringify(chatLog.value),
           },
         };
         //发送聊天记录
         await axios(config);
         //发送后需要清空,不然会出bug
-        chatLog.length = 0;
+        chatLog.value = {};
       }
     });
     return { topBarVisibility };

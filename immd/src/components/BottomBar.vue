@@ -93,6 +93,7 @@ export default {
         title.value = "消息";
         //使用replace将不会留下历史记录
         router.replace("/index/Message");
+        console.log(router)
       } else {
         messageText.value.style.color = "rgb(0,0,0)";
         messageImg.value.style.backgroundImage = "url(/interactive.png)";

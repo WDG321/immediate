@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -75,17 +75,17 @@ public class WebSocketServer {
     @OnMessage
     public void onMessage(String message, Session session) {
         System.out.println("【websocket消息】收到客户端发来的消息:{" + message + "}");
-        //把消息序列化为对象
-        idOrMessage messageObj = ObjectMapperUtil.toObj(message, idOrMessage.class);
+        //把消息序列化为map
+        HashMap messageHashMap = ObjectMapperUtil.toObj(message, HashMap.class);
         /*记录对方的id*/
-        int contactId = messageObj.getId();
+        int contactId = (int) messageHashMap.get("id");
         //因为消息内的id是需要向哪个联系人发消息的id，所以需要改为自己的id,因为这里需要发送人的id
-        messageObj.setId(userId);
-        String s2 = ObjectMapperUtil.toJSON(messageObj);
+        messageHashMap.put("id", userId);
+        String s2 = ObjectMapperUtil.toJSON(messageHashMap);
         //把id变回来，不然会出bug
-        messageObj.setId(contactId);
+        messageHashMap.put("id", contactId);
         //发送消息给指定用户
-        boolean b = designatedIdSend(messageObj.getId(), s2);
+        boolean b = designatedIdSend(contactId, s2);
         //处理用户不在线的情况,把消息存入对方的聊天记录当中
         if (!b) {
             //通过工具类获取sqlSession对象
@@ -93,20 +93,30 @@ public class WebSocketServer {
             //通过代理模式创建UserMapper接口的代理实现类对象
             userMapper mapper = sqlSession.getMapper(userMapper.class);
             //通过id获取对方的聊天记录
-            String s = mapper.queryChatLog(messageObj.getId());
-            //把对方的聊天记录转为集合
-            ArrayList arrayList = ObjectMapperUtil.toObj(s, ArrayList.class);
-            System.out.println(arrayList);
+            String s = mapper.queryChatLog(contactId);
+            //把对方的聊天记录转为map
+            HashMap hashMap = ObjectMapperUtil.toObj(s, HashMap.class);
+            System.out.println(hashMap);
             //因为消息内的id是需要向哪个联系人发消息的id，所以需要改为自己的id,因为这里需要发送人的id
-            messageObj.setId(userId);
+            messageHashMap.put("id", userId);
             //添加数据到对方的聊天记录当中
-            arrayList.add(messageObj);
+            //arrayList.add(messageObj);
+            ArrayList o = (ArrayList) hashMap.get(String.valueOf(userId));
+            System.out.println("O=" + o);
+            if (o == null) {
+                //hashMap.putAll(messageHashMap);
+                ArrayList arrayList = new ArrayList();
+                arrayList.add(messageHashMap);
+                hashMap.put(userId, arrayList);
+            } else {
+                o.add(messageHashMap);
+            }
             //变回json
-            String s1 = ObjectMapperUtil.toJSON(arrayList);
+            String s1 = ObjectMapperUtil.toJSON(hashMap);
             //把id变回来，不然会出bug
-            messageObj.setId(contactId);
+            messageHashMap.put("id", contactId);
             //存入对方的数据库当中
-            int i = mapper.addChatLog(messageObj.getId(), s1);
+            int i = mapper.addChatLog(contactId, s1);
             //i为1代表成功
             //System.out.println(i);
             System.out.println("该用户不在线");

@@ -1,12 +1,13 @@
 import { createWebHistory, createWebHashHistory, createRouter } from "vue-router";
 import login from "../components/login.vue";
 import index from "../components/index.vue";
-import test from "../components/test.vue";
+import webSocketTest from "../components/webSocketTest.vue";
 import Message from "../components/Message.vue"
 import Contact from "../components/Contact.vue"
 import Me from "../components/Me.vue"
 import contactDetails from "../components/contactDetails.vue"
 import conversation from "../components/conversation.vue"
+import test from "../components/test.vue"
 import axios from "axios"
 // 全局设置 axios 发送请求带上cookie
 axios.defaults.withCredentials = true
@@ -14,6 +15,11 @@ const routes = [
   {
     path: "/",
     component: index,
+  },
+  {
+    name: "webSocketTest",
+    path: "/webSocketTest",
+    component: webSocketTest
   },
   {
     name: "test",

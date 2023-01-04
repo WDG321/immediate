@@ -7,7 +7,7 @@
   <!-- 滚动框 -->
   <el-scrollbar class="elScrollbar" ref="elScrollbar" :noresize="true">
     <!-- 聊天信息展示区 -->
-    <div v-for="i in user.chatLog">
+    <div v-for="i in user.chatLog[contact.id]">
       <div v-if="i.id == user.id" class="userMessageBox">
         <div class="userMessageText">{{ i.message }}</div>
         <img :src="user.profilePhoto" class="userProfilePhoto" />
@@ -28,6 +28,7 @@
 
 <script>
 import { useRouter } from "vue-router";
+import moment from "moment";
 import {
   inject,
   reactive,
@@ -106,14 +107,13 @@ export default {
         elScrollbar.value.wrapRef.style.height = initHeight - 93 + "px";
       }
     };
-    //定义存储聊天记录的对象
+    //存储聊天记录的对象
     let chatLog = inject("chatLog");
-    console.log("存储聊天记录的对象", chatLog);
     //组件将要销毁事件
     onBeforeUnmount(async () => {
       //解绑window.onresize事件，不然在其他页面会出现bug
       window.onresize = null;
-      if (chatLog.length > 0) {
+      if (JSON.stringify(chatLog.value) != "{}") {
         //定义请求配置对象
         let config = {
           method: "post",
@@ -122,21 +122,21 @@ export default {
             "Content-Type": "application/x-www-form-urlencoded",
           },
           data: {
-            message: JSON.stringify(chatLog),
+            message: JSON.stringify(chatLog.value),
           },
         };
         //发送聊天记录
         await axios(config);
         //发送后需要清空,不然会出bug
-        chatLog.length = 0;
-        console.log("组件将要销毁时发送成功", chatLog);
+        chatLog.value = {};
+        console.log("组件将要销毁时发送成功", chatLog.value);
       }
     });
 
     //获取WebSocket链接对象
     const ws = inject("ws");
     const sendMessage = () => {
-      console.log(ws);
+      console.log("sendMessage触发了");
       //输入为空就不往下执行了
       if (inputValue.value == "") {
         return ElMessage.error("输入不能为空");
@@ -153,8 +153,9 @@ export default {
       }
       //定义发送的消息对象
       const ms = {
-        id: contact.id,
+        id: contact.id, //需要发送信息的联系人的id
         message: inputValue.value,
+        date: moment().format("lll"), // 时间
       };
       //发送消息
       ws.send(JSON.stringify(ms));
@@ -178,8 +179,28 @@ export default {
       //scrollHeight为获取对象的滚动高度
       elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
       //向聊天记录里面添加信息
-      chatLog.push({ message: inputValue.value, id: user.id });
-      console.log("向聊天记录里面添加信息", chatLog);
+      if (JSON.stringify(chatLog.value) != "{}") {
+        for (let k in chatLog.value) {
+          console.log("k", k);
+          //找到联系人id才添加
+          if (k == contact.id) {
+            chatLog.value[k].push({
+              message: inputValue.value,
+              id: user.id,
+              date: moment().format("lll"),
+            });
+          }
+        }
+      } else {
+        chatLog.value[contact.id] = [
+          {
+            message: inputValue.value,
+            id: user.id,
+            date: moment().format("lll"),
+          },
+        ];
+      }
+      console.log("向聊天记录里面添加信息", chatLog.value);
       //清空输入框信息
       inputValue.value = "";
     };
@@ -187,6 +208,7 @@ export default {
     let box03 = ref(null);
     //监听消息变化
     watch(serverMessage, () => {
+      console.log("聊天页面的监听触发了", serverMessage);
       //创建并添加元素
       const box03 = document.createElement("div");
       box03.style = "display: flex; align-items: center;";
@@ -206,7 +228,6 @@ export default {
       //scrollHeight为获取对象的滚动高度
       elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
     });
-
     return {
       returnMessage,
       contact,

@@ -61,12 +61,17 @@ export default {
       console.log("app", user);
     });
     //保存接收到服务端WebSocket的消息对象
+    //code用于保证能监听到变了，因为watch监听不到重新赋相同的值
     let serverMessage = reactive({
-      message: null, //消息
-      id: null, //发送人id
       code: true,
+      message: null,
+      id: null,
+      date: null,
     });
     provide("serverMessage", serverMessage);
+    //定义存储聊天记录的对象
+    let chatLog = ref({});
+    provide("chatLog", chatLog);
     //保存WebSocket链接对象
     let ws = null;
     try {
@@ -77,8 +82,9 @@ export default {
         //更新服务端的消息对象
         serverMessage.message = JSON.parse(event.data).message;
         serverMessage.id = JSON.parse(event.data).id;
+        serverMessage.date = JSON.parse(event.data).date;
         serverMessage.code = !serverMessage.code;
-        console.log(serverMessage);
+        console.log("event", serverMessage);
       };
       provide("ws", ws);
     } catch (error) {
@@ -93,37 +99,66 @@ export default {
         elMessageError.close();
       }, 3000);
     }
-    //定义存储聊天记录的对象
-    let chatLog = reactive([]);
-    provide("chatLog", chatLog);
     //监听消息变化
     watch(serverMessage, () => {
-      console.log("消息变化了", chatLog);
       //向聊天记录里面添加信息
-      chatLog.push({
-        message: serverMessage.message,
-        id: serverMessage.id,
-      });
-      //更新user里的聊天记录,以保证本地的记录实时更新
-      user.chatLog.push({
-        message: serverMessage.message,
-        id: serverMessage.id,
-      });
+      if (JSON.stringify(chatLog.value) != "{}") {
+        for (let k in chatLog.value) {
+          console.log("k", k);
+          //找到联系人id才添加
+          if (k == serverMessage.id) {
+            chatLog.value[k].push({
+              message: serverMessage.message,
+              id: serverMessage.id,
+              date: serverMessage.date,
+            });
+            //还需要更新user里的聊天记录,以保证本地的记录实时更新
+            /* user.chatLog[k].push({
+              message: serverMessage.message,
+              id: serverMessage.id,
+              date: serverMessage.date,
+            }); */
+          }
+        }
+      } else {
+        chatLog.value[serverMessage.id] = [
+          {
+            message: serverMessage.message,
+            id: serverMessage.id,
+            date: serverMessage.date,
+          },
+        ];
+        //还需要更新user里的聊天记录,以保证本地的记录实时更新
+        /* user.chatLog[serverMessage.id] = [
+          {
+            message: serverMessage.message,
+            id: serverMessage.id,
+            date: serverMessage.date,
+          },
+        ]; */
+      }
+      console.log("更新", chatLog.value);
     });
+
     //定义离开或刷新页面时执行的函数
     function logData() {
+      //值为hidden时此时页面对用户不可见. 即文档处于背景标签页或者窗口处于最小化状态，或者操作系统正处于 ‘锁屏状态’
       if (document.visibilityState === "hidden") {
-        console.log(chatLog.length);
-        if (chatLog.length > 0) {
+        console.log("logData", JSON.stringify(chatLog.value));
+        if (JSON.stringify(chatLog.value) != "{}") {
           const data = new FormData();
-          data.append("message", JSON.stringify(chatLog));
+          data.append("message", JSON.stringify(chatLog.value));
           //navigator.sendBeacon() 方法可用于通过 HTTP POST 将少量数据 异步 传输到 Web 服务器。
           //它主要用于将统计数据发送到 Web 服务器，同时避免了用传统技术（如：XMLHttpRequest）发送分析数据的一些问题。
           navigator.sendBeacon("http://192.168.1.134/addChatLogApi", data);
+          //发送后需要清空,不然会出bug
+          chatLog.value = {};
+          console.log("chatLog清空了", chatLog.value);
+          console.log(JSON.stringify(chatLog.value) == "{}");
         }
       }
       //关闭WebSocket连接
-      ws.close();
+      //ws.close();
     }
     //离开或刷新页面事件
     document.addEventListener("visibilitychange", logData);
