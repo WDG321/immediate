@@ -1,7 +1,7 @@
 import { createWebHistory, createWebHashHistory, createRouter } from "vue-router";
 import login from "../components/login.vue";
 import index from "../components/index.vue";
-import webSocketTest from "../components/webSocketTest.vue";
+//import webSocketTest from "../components/webSocketTest.vue";
 import Message from "../components/Message.vue"
 import Contact from "../components/Contact.vue"
 import Me from "../components/Me.vue"
@@ -16,11 +16,11 @@ const routes = [
     path: "/",
     component: index,
   },
-  {
+  /* {
     name: "webSocketTest",
     path: "/webSocketTest",
     component: webSocketTest
-  },
+  }, */
   {
     name: "test",
     path: "/test",

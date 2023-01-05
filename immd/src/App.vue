@@ -99,9 +99,6 @@ export default {
         elMessageError.close();
       }, 3000);
     }
-    watch(user, () => {
-      console.log("user变化了", user.chatLog);
-    });
     //监听消息变化
     watch(serverMessage, () => {
       //向聊天记录里面添加信息

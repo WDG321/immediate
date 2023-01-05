@@ -113,23 +113,38 @@ export default {
       const text = document.createElement("div");
       //展示聊天信息
       text.innerHTML = message;
+      text.style = "border-radius: 0.2rem; max-width: 60vw; padding: 0.5rem;";
       //创建一个展示头像的img
       const photo = document.createElement("img");
       photo.src = src;
       photo.style =
         "width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; margin: 0.5rem;";
+      //创建一个三角形
+      const triangle = document.createElement("div");
+      //配置颜色
+      let color = null;
       if (direction == "left") {
+        //对方的聊天信息背景是白色的
+        color = "rgb(255, 255, 255)";
         box.style = "display: flex; align-items: center;";
+        text.style.backgroundColor = color;
+        triangle.style = `border-top: 0.4rem solid transparent; border-bottom: 0.4rem solid transparent; border-left: 0.4rem solid transparent; border-right: 0.4rem solid ${color};`;
         //appendChild是向元素中添加元素，添加到末尾
         //因为左右问题，所以添加顺序需要反着来
         box.appendChild(photo);
+        box.appendChild(triangle);
         box.appendChild(text);
       } else if (direction == "right") {
+        //自己的则为主题的蓝色
+        color = "#409eff";
         box.style =
           "display: flex; align-items: center; justify-content: flex-end";
+        text.style.backgroundColor = color;
+        triangle.style = `border-top: 0.4rem solid transparent; border-bottom: 0.4rem solid transparent; border-right: 0.4rem solid transparent; border-left: 0.4rem solid ${color};`;
         //appendChild是向元素中添加元素，添加到末尾
         //因为左右问题，所以添加顺序需要反着来
         box.appendChild(text);
+        box.appendChild(triangle);
         box.appendChild(photo);
       } else {
         console.error("direction只能是left或者right");
