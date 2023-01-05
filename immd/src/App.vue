@@ -99,27 +99,18 @@ export default {
         elMessageError.close();
       }, 3000);
     }
+    watch(user, () => {
+      console.log("user变化了", user.chatLog);
+    });
     //监听消息变化
     watch(serverMessage, () => {
       //向聊天记录里面添加信息
       if (JSON.stringify(chatLog.value) != "{}") {
-        for (let k in chatLog.value) {
-          console.log("k", k);
-          //找到联系人id才添加
-          if (k == serverMessage.id) {
-            chatLog.value[k].push({
-              message: serverMessage.message,
-              id: serverMessage.id,
-              date: serverMessage.date,
-            });
-            //还需要更新user里的聊天记录,以保证本地的记录实时更新
-            /* user.chatLog[k].push({
-              message: serverMessage.message,
-              id: serverMessage.id,
-              date: serverMessage.date,
-            }); */
-          }
-        }
+        chatLog.value[serverMessage.id].push({
+          message: serverMessage.message,
+          id: serverMessage.id,
+          date: serverMessage.date,
+        });
       } else {
         chatLog.value[serverMessage.id] = [
           {
@@ -128,16 +119,23 @@ export default {
             date: serverMessage.date,
           },
         ];
-        //还需要更新user里的聊天记录,以保证本地的记录实时更新
-        /* user.chatLog[serverMessage.id] = [
+      }
+      //还需要更新user里的聊天记录,以保证本地的记录实时更新
+      if (JSON.stringify(user.chatLog) != "{}") {
+        user.chatLog[serverMessage.id].push({
+          message: serverMessage.message,
+          id: serverMessage.id,
+          date: serverMessage.date,
+        });
+      } else {
+        user.chatLog[serverMessage.id] = [
           {
             message: serverMessage.message,
             id: serverMessage.id,
             date: serverMessage.date,
           },
-        ]; */
+        ];
       }
-      console.log("更新", chatLog.value);
     });
 
     //定义离开或刷新页面时执行的函数
@@ -153,8 +151,6 @@ export default {
           navigator.sendBeacon("http://192.168.1.134/addChatLogApi", data);
           //发送后需要清空,不然会出bug
           chatLog.value = {};
-          console.log("chatLog清空了", chatLog.value);
-          console.log(JSON.stringify(chatLog.value) == "{}");
         }
       }
       //关闭WebSocket连接

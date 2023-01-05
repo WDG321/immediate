@@ -7,16 +7,6 @@
   <!-- 滚动框 -->
   <el-scrollbar class="elScrollbar" ref="elScrollbar" :noresize="true">
     <!-- 聊天信息展示区 -->
-    <div v-for="i in user.chatLog[contact.id]">
-      <div v-if="i.id == user.id" class="userMessageBox">
-        <div class="userMessageText">{{ i.message }}</div>
-        <img :src="user.profilePhoto" class="userProfilePhoto" />
-      </div>
-      <div v-else-if="i.id == contact.id" class="contactMessageBox">
-        <img :src="contact.profilePhoto" class="contactProfilePhoto" />
-        <div class="contactMessageText">{{ i.message }}</div>
-      </div>
-    </div>
   </el-scrollbar>
   <div class="box02">
     <input v-model="inputValue" class="input" />
@@ -79,11 +69,74 @@ export default {
       //document.documentElement.clientHeight为网页可见区域高
       //92.8的来源是顶部导航与底部导航的高度加起来任何乘以16，16为html的字体大小(px),因为使用了rem来设置高度
       elScrollbar.value.wrapRef.style.height = initHeight - 93 + "px";
+      console.log("conversationonMounted", user);
+      //判断不为空就进行遍历操作,为空就代表是第一次与该联系人聊天还没有数据,就不需要遍历了
+      //这里的id是个变量,user.chatLog是个obj
+      if (user.chatLog[id] != undefined) {
+        //决定放哪边的变量
+        let direction = null;
+        //消息内容
+        let message = null;
+        //头像地址
+        let src = null;
+        //遍历user.chatLog里的数据并展示到页面上
+        for (let i = 0; i < user.chatLog[id].length; i++) {
+          //通过id判断是谁发的信息从而决定放哪边
+          if (user.chatLog[id][i].id == user.id) {
+            direction = "right";
+            message = user.chatLog[id][i].message;
+            src = user.profilePhoto;
+          } else {
+            direction = "left";
+            message = user.chatLog[id][i].message;
+            src = contact.profilePhoto;
+          }
+          addBox(direction, message, src);
+        }
+      }
+      console.log(user.chatLog[id] == undefined);
       //更改滚动条位置,使之滚动到底
       //scrollHeight为获取对象的滚动高度
       elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
-      console.log("conversationonMounted", user);
     });
+    //定义一个向页面中添加元素的函数
+    /* 
+      参数：
+        direction：方向，left或者right，left代表对方发送的信息，right代表自己发送的信息 
+        message：聊天信息
+        src：头像地址
+    */
+    const addBox = (direction, message, src) => {
+      //创建一个div,用于包裹元素方便布局
+      const box = document.createElement("div");
+      //创建一个展示信息的div
+      const text = document.createElement("div");
+      //展示聊天信息
+      text.innerHTML = message;
+      //创建一个展示头像的img
+      const photo = document.createElement("img");
+      photo.src = src;
+      photo.style =
+        "width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; margin: 0.5rem;";
+      if (direction == "left") {
+        box.style = "display: flex; align-items: center;";
+        //appendChild是向元素中添加元素，添加到末尾
+        //因为左右问题，所以添加顺序需要反着来
+        box.appendChild(photo);
+        box.appendChild(text);
+      } else if (direction == "right") {
+        box.style =
+          "display: flex; align-items: center; justify-content: flex-end";
+        //appendChild是向元素中添加元素，添加到末尾
+        //因为左右问题，所以添加顺序需要反着来
+        box.appendChild(text);
+        box.appendChild(photo);
+      } else {
+        console.error("direction只能是left或者right");
+        return;
+      }
+      elScrollbar.value.wrapRef.appendChild(box);
+    };
     //window.onresize事件会在窗口或框架被调整大小时发生。
     window.onresize = function () {
       //键盘弹起或者收起来引起的窗口高度的变化，再次获取下窗口高度和进入页面的时候获取的的窗口进行对比
@@ -159,22 +212,8 @@ export default {
       };
       //发送消息
       ws.send(JSON.stringify(ms));
-      //创建并添加元素
-      const box03 = document.createElement("div");
-      box03.style =
-        "display: flex; align-items: center; justify-content: flex-end";
-      const text = document.createElement("div");
-      text.innerHTML = inputValue.value;
-      //appendChild是向元素中添加元素，添加到末尾
-      box03.appendChild(text);
-      const contactProfilePhoto = document.createElement("img");
-      contactProfilePhoto.src = user.profilePhoto;
-      contactProfilePhoto.style =
-        "width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; margin: 0.5rem;";
-      //appendChild是向元素中添加元素，添加到末尾
-      box03.appendChild(contactProfilePhoto);
-      //appendChild是向元素中添加元素，添加到末尾
-      elScrollbar.value.wrapRef.appendChild(box03);
+      //创建并添加元素到页面
+      addBox("right", inputValue.value, user.profilePhoto);
       //更改滚动条位置,使之滚动到底
       //scrollHeight为获取对象的滚动高度
       elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
@@ -205,25 +244,12 @@ export default {
       inputValue.value = "";
     };
     let serverMessage = inject("serverMessage");
-    let box03 = ref(null);
+    let box = ref(null);
     //监听消息变化
     watch(serverMessage, () => {
       console.log("聊天页面的监听触发了", serverMessage);
-      //创建并添加元素
-      const box03 = document.createElement("div");
-      box03.style = "display: flex; align-items: center;";
-      const contactProfilePhoto = document.createElement("img");
-      contactProfilePhoto.src = contact.profilePhoto;
-      contactProfilePhoto.style =
-        "width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; margin: 0.5rem;";
-      //appendChild是向元素中添加元素，添加到末尾
-      box03.appendChild(contactProfilePhoto);
-      const text = document.createElement("div");
-      text.innerHTML = serverMessage.message;
-      //appendChild是向元素中添加元素，添加到末尾
-      box03.appendChild(text);
-      //appendChild是向元素中添加元素，添加到末尾
-      elScrollbar.value.wrapRef.appendChild(box03);
+      //创建并添加元素到页面
+      addBox("left", serverMessage.message, contact.profilePhoto);
       //更改滚动条位置,使之滚动到底
       //scrollHeight为获取对象的滚动高度
       elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
