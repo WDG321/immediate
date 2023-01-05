@@ -234,17 +234,11 @@ export default {
       elScrollbar.value.setScrollTop(elScrollbar.value.wrapRef.scrollHeight);
       //向聊天记录里面添加信息
       if (JSON.stringify(chatLog.value) != "{}") {
-        for (let k in chatLog.value) {
-          console.log("k", k);
-          //找到联系人id才添加
-          if (k == contact.id) {
-            chatLog.value[k].push({
-              message: inputValue.value,
-              id: user.id,
-              date: moment().format("lll"),
-            });
-          }
-        }
+        chatLog.value[contact.id].push({
+          message: inputValue.value,
+          id: user.id,
+          date: moment().format("lll"),
+        });
       } else {
         chatLog.value[contact.id] = [
           {
@@ -255,6 +249,22 @@ export default {
         ];
       }
       console.log("向聊天记录里面添加信息", chatLog.value);
+      //还需要更新user里的聊天记录,以保证本地的记录实时更新
+      if (JSON.stringify(user.chatLog) != "{}") {
+        user.chatLog[contact.id].push({
+          message: inputValue.value,
+          id: user.id,
+          date: moment().format("lll"),
+        });
+      } else {
+        user.chatLog[serverMessage.id] = [
+          {
+            message: inputValue.value,
+            id: user.id,
+            date: moment().format("lll"),
+          },
+        ];
+      }
       //清空输入框信息
       inputValue.value = "";
     };
