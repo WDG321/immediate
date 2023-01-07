@@ -46,7 +46,8 @@ export default {
       //创建请求配置对象
       let config = {
         method: "post",
-        url: "http://192.168.1.134/meApi",
+        /* url: "http://192.168.1.134/meApi", */
+        url: "http://192.168.215.42/meApi",
       };
       //发送请求获取用户数据
       let value = await axios(config);
@@ -59,6 +60,8 @@ export default {
         user.chatLog = JSON.parse(value.data.chatLog);
       }
       console.log("app", user);
+      //保证message页面的数据是app获取完毕后的
+      serverMessage.code = !serverMessage.code;
     });
     //保存接收到服务端WebSocket的消息对象
     //code用于保证能监听到变了，因为watch监听不到重新赋相同的值
@@ -76,7 +79,8 @@ export default {
     let ws = null;
     try {
       //建立WebSocket链接
-      ws = new WebSocket("ws://192.168.1.134/websocket");
+      //ws = new WebSocket("ws://192.168.1.134/websocket");
+      ws = new WebSocket("ws://192.168.215.42/websocket");
       //接收到服务端的消息事件
       ws.onmessage = (event) => {
         //更新服务端的消息对象
@@ -85,6 +89,38 @@ export default {
         serverMessage.date = JSON.parse(event.data).date;
         serverMessage.code = !serverMessage.code;
         console.log("event", serverMessage);
+        //向聊天记录里面添加信息
+        if (JSON.stringify(chatLog.value) != "{}") {
+          chatLog.value[serverMessage.id].push({
+            message: serverMessage.message,
+            id: serverMessage.id,
+            date: serverMessage.date,
+          });
+        } else {
+          chatLog.value[serverMessage.id] = [
+            {
+              message: serverMessage.message,
+              id: serverMessage.id,
+              date: serverMessage.date,
+            },
+          ];
+        }
+        //还需要更新user里的聊天记录,以保证本地的记录实时更新
+        if (JSON.stringify(user.chatLog) != "{}") {
+          user.chatLog[serverMessage.id].push({
+            message: serverMessage.message,
+            id: serverMessage.id,
+            date: serverMessage.date,
+          });
+        } else {
+          user.chatLog[serverMessage.id] = [
+            {
+              message: serverMessage.message,
+              id: serverMessage.id,
+              date: serverMessage.date,
+            },
+          ];
+        }
       };
       provide("ws", ws);
     } catch (error) {
@@ -99,41 +135,6 @@ export default {
         elMessageError.close();
       }, 3000);
     }
-    //监听消息变化
-    watch(serverMessage, () => {
-      //向聊天记录里面添加信息
-      if (JSON.stringify(chatLog.value) != "{}") {
-        chatLog.value[serverMessage.id].push({
-          message: serverMessage.message,
-          id: serverMessage.id,
-          date: serverMessage.date,
-        });
-      } else {
-        chatLog.value[serverMessage.id] = [
-          {
-            message: serverMessage.message,
-            id: serverMessage.id,
-            date: serverMessage.date,
-          },
-        ];
-      }
-      //还需要更新user里的聊天记录,以保证本地的记录实时更新
-      if (JSON.stringify(user.chatLog) != "{}") {
-        user.chatLog[serverMessage.id].push({
-          message: serverMessage.message,
-          id: serverMessage.id,
-          date: serverMessage.date,
-        });
-      } else {
-        user.chatLog[serverMessage.id] = [
-          {
-            message: serverMessage.message,
-            id: serverMessage.id,
-            date: serverMessage.date,
-          },
-        ];
-      }
-    });
 
     //定义离开或刷新页面时执行的函数
     function logData() {
@@ -145,7 +146,8 @@ export default {
           data.append("message", JSON.stringify(chatLog.value));
           //navigator.sendBeacon() 方法可用于通过 HTTP POST 将少量数据 异步 传输到 Web 服务器。
           //它主要用于将统计数据发送到 Web 服务器，同时避免了用传统技术（如：XMLHttpRequest）发送分析数据的一些问题。
-          navigator.sendBeacon("http://192.168.1.134/addChatLogApi", data);
+          //navigator.sendBeacon("http://192.168.1.134/addChatLogApi", data);
+          navigator.sendBeacon("http://192.168.215.42/addChatLogApi", data);
           //发送后需要清空,不然会出bug
           chatLog.value = {};
         }

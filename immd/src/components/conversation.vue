@@ -113,7 +113,8 @@ export default {
       const text = document.createElement("div");
       //展示聊天信息
       text.innerHTML = message;
-      text.style = "border-radius: 0.2rem; max-width: 60vw; padding: 0.5rem;";
+      text.style =
+        "border-radius: 0.2rem; max-width: 60vw; padding: 0.5rem; word-break:break-all";
       //创建一个展示头像的img
       const photo = document.createElement("img");
       photo.src = src;
@@ -185,7 +186,8 @@ export default {
         //定义请求配置对象
         let config = {
           method: "post",
-          url: "http://192.168.1.134/addChatLogApi",
+          /* url: "http://192.168.1.134/addChatLogApi", */
+          url: "http://192.168.215.42/addChatLogApi",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
@@ -339,30 +341,5 @@ export default {
 .button {
   margin-right: 1rem;
   width: 20vw;
-}
-.userMessageBox {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-.contactMessageBox {
-  display: flex;
-  align-items: center;
-}
-.userMessageText {
-}
-.userProfilePhoto {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.5rem;
-  margin: 0.5rem;
-}
-.contactProfilePhoto {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.5rem;
-  margin: 0.5rem;
-}
-.contactMessageText {
 }
 </style>

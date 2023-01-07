@@ -22,7 +22,8 @@ export default {
         //定义请求配置对象
         let config = {
           method: "post",
-          url: "http://192.168.1.134/addChatLogApi",
+          /* url: "http://192.168.1.134/addChatLogApi", */
+          url: "http://192.168.215.42/addChatLogApi",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },

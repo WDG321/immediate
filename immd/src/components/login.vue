@@ -64,7 +64,8 @@ export default {
       //配置请求信息
       let config = {
         method: "post",
-        url: "http://192.168.1.134/loginApi",
+        /* url: "http://192.168.1.134/loginApi", */
+        url: "http://192.168.215.42/loginApi",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
@@ -78,7 +79,7 @@ export default {
       //判断是否登录成功
       if (response.data == true) {
         //播放加载中动画
-        ElLoading.service();
+        //ElLoading.service();
         //登录成功跳到主页，使用replace将不会留下历史记录
         router.replace("/");
       } else {
