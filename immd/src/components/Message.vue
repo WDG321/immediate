@@ -14,18 +14,13 @@
 </template>
 
 <script>
-import {
-  ref,
-  onMounted,
-  inject,
-  watch,
-  getCurrentInstance,
-  onUpdated,
-} from "vue";
+import { ref, onMounted, inject, watch } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 export default {
   name: "Message",
   setup() {
+    const router = useRouter();
     const elScrollbar = ref(null);
     //后代组件有一个 `inject` 选项来开始使用这些数据
     let messageScrollDistance = inject("messageScrollDistance"); //使用inject函数接收祖先组件使用provide函数传递的数据
@@ -40,11 +35,22 @@ export default {
       src:联系人头像地址 
       contactName:联系人昵称
       newMessage:最新消息
+      sandDate:发送时间
+      contactId:联系人id
     */
-    const addNode = (src, contactName, newMessage) => {
-      console.log("向页面添加元素的函数");
+    const addNode = (src, contactName, newMessage, sandDate, contactId) => {
+      console.log("向页面添加元素的函数", contactId);
       //创建一个最外层的div，方便布局
       const box = document.createElement("div");
+      box.onclick = () => {
+        console.log("666");
+        //使用replace将不会留下历史记录
+        router.replace({
+          name: "conversation",
+          //路由传参
+          query: { id: contactId },
+        });
+      };
       box.style = "width: 100vw; display: flex; align-items: center;";
       //创建展示头像的img
       const img = document.createElement("img");
@@ -77,7 +83,7 @@ export default {
       const date = document.createElement("div");
       date.style =
         "font-size: 0.8rem; color: rgb(183, 183, 183); margin-right: 0.5rem; margin-top: 0.5rem;";
-      date.innerHTML = "2022/02/15";
+      date.innerHTML = sandDate;
       //appendChild是向元素中添加元素，添加到末尾
       box2.appendChild(date);
       //appendChild是向元素中添加元素，添加到末尾
@@ -107,7 +113,9 @@ export default {
         addNode(
           contact.profilePhoto,
           contact.username,
-          user.chatLog[obj][user.chatLog[obj].length - 1].message
+          user.chatLog[obj][user.chatLog[obj].length - 1].message,
+          user.chatLog[obj][user.chatLog[obj].length - 1].date,
+          contact.id
         );
       }
     });
@@ -129,7 +137,8 @@ export default {
         addNode(
           contact.profilePhoto,
           contact.username,
-          user.chatLog[obj][user.chatLog[obj].length - 1].message
+          user.chatLog[obj][user.chatLog[obj].length - 1].message,
+          user.chatLog[obj][user.chatLog[obj].length - 1].date
         );
       }
     });
