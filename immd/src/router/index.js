@@ -8,6 +8,7 @@ import Me from "../components/Me.vue"
 import contactDetails from "../components/contactDetails.vue"
 import conversation from "../components/conversation.vue"
 import test from "../components/test.vue"
+import addFriends from "../components/addFriends.vue"
 import axios from "axios"
 // 全局设置 axios 发送请求带上cookie
 axios.defaults.withCredentials = true
@@ -52,11 +53,31 @@ const routes = [
       //from: 当前导航正要离开的路由 
       //返回 false 以取消导航
       //返回一个路由地址: 通过一个路由地址跳转到一个不同的地址
-      //阻止用户通过url直接进入聊天页面
+      //阻止用户通过url直接进入此页面
       if (from.name != "contactDetails" && from.name != "Message") {
         return "/index/Message"
       }
     },
+  },
+  {
+    name: "addFriends",
+    path: "/addFriends",
+    component: addFriends,
+    beforeEnter: (to, from) => {
+      //to: 即将要进入的目标
+      //from: 当前导航正要离开的路由 
+      //返回 false 以取消导航
+      //返回一个路由地址: 通过一个路由地址跳转到一个不同的地址
+      //阻止用户通过url直接进入此页面
+      //因为直接刷新页面无法获取from.matched[0].name属性，所以使用trycatch进行操作
+      try {
+        if (from.matched[0].name != "index") {
+          return "/index/Message"
+        }
+      } catch {
+        return "/index/Message"
+      }
+    }
   },
   {
     name: "index",

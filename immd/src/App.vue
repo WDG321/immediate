@@ -163,4 +163,14 @@ export default {
 </script>
 
 <style>
+/* 修改弹出框的样式 */
+.el-popover,
+.el-popper__arrow::before {
+  background: rgb(80, 77, 77) !important;
+}
+.el-popover {
+  padding: 0 !important;
+  padding-left: 1rem !important;
+  padding-bottom: 1rem !important;
+}
 </style>

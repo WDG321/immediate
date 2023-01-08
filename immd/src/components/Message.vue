@@ -1,15 +1,6 @@
 <template>
   <el-scrollbar class="elScrollbar" ref="elScrollbar" @scroll="scroll">
-    <!-- <div class="box" v-for="message in user.chatLog">
-      <img class="img" />
-      <div class="box2">
-        <div class="box3">
-          <div class="name">王五</div>
-          <div class="message">事件使读取文件我等级积分是对奥苏</div>
-        </div>
-        <div class="date">2023/1/89</div>
-      </div>
-    </div> -->
+    <!-- 消息列表展示区 -->
   </el-scrollbar>
 </template>
 
@@ -39,11 +30,11 @@ export default {
       contactId:联系人id
     */
     const addNode = (src, contactName, newMessage, sandDate, contactId) => {
-      console.log("向页面添加元素的函数", contactId);
+      console.log("向页面添加元素的函数");
       //创建一个最外层的div，方便布局
       const box = document.createElement("div");
       box.onclick = () => {
-        console.log("666");
+        console.log("contactId", contactId);
         //使用replace将不会留下历史记录
         router.replace({
           name: "conversation",
@@ -138,7 +129,8 @@ export default {
           contact.profilePhoto,
           contact.username,
           user.chatLog[obj][user.chatLog[obj].length - 1].message,
-          user.chatLog[obj][user.chatLog[obj].length - 1].date
+          user.chatLog[obj][user.chatLog[obj].length - 1].date,
+          contact.id
         );
       }
     });
@@ -148,40 +140,4 @@ export default {
 </script>
 
 <style scoped>
-/* .box {
-  width: 100vw;
-  display: flex;
-  align-items: center;
-}
-.img {
-  width: 3rem;
-  height: 3rem;
-  margin: 0.5rem;
-  border-radius: 0.3rem;
-}
-.box2 {
-  display: flex;
-  justify-content: space-between;
-  width: calc(100vw - 3.5rem);
-  border-bottom: 0.4px solid rgba(205, 204, 204, 0.5);
-  height: 4rem;
-}
-.name {
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
-}
-.message {
-  font-size: 0.8rem;
-  color: rgb(183, 183, 183);
-  width: 12rem;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.date {
-  font-size: 0.8rem;
-  color: rgb(183, 183, 183);
-  margin-right: 0.5rem;
-  margin-top: 0.5rem;
-} */
 </style>
