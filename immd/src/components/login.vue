@@ -43,6 +43,7 @@ export default {
   setup() {
     let username = ref("");
     let password = ref("");
+    //决定按钮是否为加载状态
     let loading = ref(false);
     let buttonText = ref("登录");
     const router = useRouter();
@@ -164,6 +165,7 @@ export default {
   font-size: 1.5rem;
 }
 :deep(.el-input__inner) {
+  /* 输入文本居中 */
   text-align: center;
 }
 .button {
