@@ -17,4 +17,13 @@ public interface userMapper {
 
     //根据id查询用户的聊天记录
     String queryChatLog(int id);
+
+    //根据id查询用户名和头像地址，用于添加联系人前的查询用户
+    user idQueryUser(int id);
+
+    //根据id查询用户除密码联系人聊天记录外的信息
+    user idQueryUser2(int id);
+
+    //根据id查询用户的联系人列表
+    String idQueryContact(int id);
 }

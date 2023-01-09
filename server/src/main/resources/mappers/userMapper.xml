@@ -39,4 +39,22 @@
     from user
     where id = #{id}
     </select>
+    <!--根据id查询用户名和头像地址，用于添加联系人前的查询用户-->
+    <select id="idQueryUser" resultType="com.example.server.entity.user">/*不使用类型别名*/
+    select username, profilePhoto
+    from user
+    where id = #{id}
+    </select>
+    <!--根据id查询用户除密码联系人聊天记录外的信息-->
+    <select id="idQueryUser2" resultType="com.example.server.entity.user">/*不使用类型别名*/
+    select username, profilePhoto, id
+    from user
+    where id = #{id}
+    </select>
+    <!--根据id查询用户的联系人列表-->
+    <select id="idQueryContact" resultType="String">/*不使用类型别名*/
+    select contact
+    from user
+    where id = #{id}
+    </select>
 </mapper>
