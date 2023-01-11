@@ -60,12 +60,8 @@ public class addContact {
             ArrayList contactObj = ObjectMapperUtil.toObj(contact, ArrayList.class);
             /*如果联系人存在则放弃添加*/
             for (int i = 0; i < contactObj.size(); i++) {
-                System.out.println("666" + contactObj.get(i));
                 String s = ObjectMapperUtil.toJSON(contactObj.get(i));
                 user user = ObjectMapperUtil.toObj(s, user.class);
-                System.out.println(user.getId() == id);
-                System.out.println(user.getId());
-                System.out.println(id);
                 if (user.getId() == id) {
                     return false;
                 }

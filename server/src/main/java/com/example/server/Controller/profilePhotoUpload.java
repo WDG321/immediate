@@ -33,12 +33,7 @@ public class profilePhotoUpload {
     public String profilePhotoUploadApi(MultipartFile profilePhoto, HttpServletRequest request) {
         //使用request对象的getSession()获取session，如果session不存在则创建一个
         //参数设置为false的话就不会创建新的，而是返回null
-        HttpSession Session = request.getSession(false);
-        //判断是否登录或者是否登录过期
-        if (Session == null) {
-            //未登录就不进行操作了
-            return "请登录";
-        }
+        //HttpSession Session = request.getSession(false);
         //没有数据则返回提示
         if (profilePhoto == null) {
             return "请上传头像";
@@ -68,7 +63,7 @@ public class profilePhotoUpload {
             //协议 :// ip地址 ：端口号 / 文件目录(/images/2020/03/15/xxx.jpg)
             String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/images/" + directory + newFileName;
             System.out.println("图片上传，访问URL：" + url);
-            return "图片上传成功,访问URL:" + url;
+            return url;
         } catch (IOException e) {
             return "IO异常！";
         }

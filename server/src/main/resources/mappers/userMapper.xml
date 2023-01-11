@@ -57,4 +57,9 @@
     from user
     where id = #{id}
     </select>
+    <!--注册用户-->
+    <insert id="registered">
+        insert into user
+        values (null, #{username}, #{password}, #{profilePhoto}, '[]', '{}')
+    </insert>
 </mapper>

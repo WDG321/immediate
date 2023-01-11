@@ -26,4 +26,7 @@ public interface userMapper {
 
     //根据id查询用户的联系人列表
     String idQueryContact(int id);
+
+    //注册用户
+    int registered(user user);
 }
